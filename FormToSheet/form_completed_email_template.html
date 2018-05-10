@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body style ="font-family:'trebuchet ms'">
+  Hi <?= parentName ?>,
+  <p>Thank you for filling out the party details form. Below is a summary of what you have ordered:</p>
+  <p><b>&emsp;Number of children attending:</b> <i><?= childrenCount ?></i></p>
+  <p><b>&emsp;Chosen Creations:</b> <i><?= creations ?></i></p>
+  <? if (additions != "") { ?>
+  <p><b>&emsp;Additions:</b> <i><?= additions ?></i></p>
+  <? } ?>
+  <? if (cakeRequired == "Yes please!") { ?>
+  <p><b>&emsp;Chosen Cake:</b> <i><?= cakeFlavour ?> <?= selectedCake ?></i></p>
+  <? } ?>
+  <p>If anything here is different to what you have ordered, or anything changes, please email me with the correct details.</p>
+  <? if (questions != "") { ?>
+  <p>I have also noticed that you have asked some questions in the form. I will be in touch over the next couple of days to answer those questions for you.</p>
+  <? } ?>
+  <? if (partyType == "In-store") { ?>
+  <p>Payment will be made at the end of the party, and you will only be charged for the number of children that attend on the day. (Minimum 12).</p>
+  <p>Lastly, on the day of your party, kindly arrive 10 minutes before the start time. The rest is up to us.</p>
+  <? } else if (partyType == "Travel") { ?>
+  <p>A SENTENCE ABOUT HOW PAYMENTS WORK FOR TRAVEL PARTY</p>
+  <p>On the day of your party, <? if (childrenCount == "12 - 15 children") { ?> one <? } else { ?> two <? } ?> of our fabulous party hosts will arrive 10 minutes before to set up and run the party.</p>
+  <p>All we ask is for you to have a table set up where the children can either sit or stand around.</p>
+  <? } ?>
+  <p>We look forward to seeing you then!!</p>
+  <p>Kind regards,</p>
+  <p>Talia and the Fizz Kidz team</p>
+  </body>
+</html>
+
+
