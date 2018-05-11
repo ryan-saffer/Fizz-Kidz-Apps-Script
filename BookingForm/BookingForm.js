@@ -122,7 +122,7 @@ function restoreValidation() {
   currentCell.setDataValidation(rule);
   
   currentCell = sheet.getRange('B10');
-  helpText = "Party type/store-location cannot be edited. To change store location or convert to a travel party, you must delete this booking and create a new one.";
+  helpText = "Party type/store-location cannot be edited. To change store location or convert to a mobile party, you must delete this booking and create a new one.";
   rule = SpreadsheetApp.newDataValidation().requireTextEqualTo(currentCell.getValue()).setAllowInvalid(false).setHelpText(helpText).build();
   currentCell.setDataValidation(rule);
   
@@ -207,27 +207,27 @@ function validateFields(parentName, mobileNumber, emailAddress, childName, child
   }
   
   if(partyType == "") {
-    Browser.msgBox("You must enter the type of party as Malvern, Balwyn or Travel. Party not updated/created. Try again, and ensure it updates in Calendar");
-    throw new Error("You must enter the type of party as Malvern, Balwyn or Travel. Operation cancelled.");
+    Browser.msgBox("You must enter the type of party as Malvern, Balwyn or Mobile. Party not updated/created. Try again, and ensure it updates in Calendar");
+    throw new Error("You must enter the type of party as Malvern, Balwyn or Mobile. Operation cancelled.");
   }
-  // In-store must be 1.5 or 2 hours, Travel must be 1 or 1.5 hours. Validate here
+  // In-store must be 1.5 or 2 hours, Mobile must be 1 or 1.5 hours. Validate here
   if (partyType == "Malvern" || partyType == "Balwyn") {
     if (partyLength == "1") {
       Browser.msgBox("An In-store party cannot have a party length of 1 hour. Party not updated/created. Try again, and ensure it updates in Calendar");
       throw new Error("An In-store party cannot have a party length of 1 hour. Operation cancelled.");
     }
   }
-  if (partyType == "Travel") {
+  if (partyType == "Mobile") {
     if (partyLength == "2") {
-      Browser.msgBox("A Travel party cannot have a party length of 2 hours Party not updated/created. Try again, and ensure it updates in Calendar");
-      throw new Error("A Travel party cannot have a party length of 2 hours. Operation cancelled.");
+      Browser.msgBox("A Mobile party cannot have a party length of 2 hours Party not updated/created. Try again, and ensure it updates in Calendar");
+      throw new Error("A Mobile party cannot have a party length of 2 hours. Operation cancelled.");
     }
   }
   
   if (location == "") {
-    if (partyType == "Travel") {
-      Browser.msgBox("Travel party must have a location. Party not updated/created. Try again, and ensure it updates in Calendar");
-      throw new Error("Travel party must have a location. Operation cancelled.");
+    if (partyType == "Mobile") {
+      Browser.msgBox("Mobile party must have a location. Party not updated/created. Try again, and ensure it updates in Calendar");
+      throw new Error("Mobile party must have a location. Operation cancelled.");
     }
   }
   // in store party cannot have a location
@@ -330,7 +330,7 @@ function createEvent(parentName, mobileNumber, childName, childAge, dateOfParty,
   
   var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
   var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
-  var travelPartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
+  var mobilePartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
   
   var eventObj = { 
     summary: eventName,
@@ -351,7 +351,7 @@ function createEvent(parentName, mobileNumber, childName, childAge, dateOfParty,
     calendarID = balwynStorePartiesCalendarID;
   }
   else {
-    calendarID = travelPartiesCalendarID;
+    calendarID = mobilePartiesCalendarID;
   }
   var newEvent = Calendar.Events.insert(eventObj, calendarID, {'supportsAttachments': true});
   
@@ -384,7 +384,7 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
       default:
         break;
     }
-  } else if (partyType == "Travel") {
+  } else if (partyType == "Mobile") {
     switch (partyLength) {
       case "1":
         creationCount = "two";
@@ -410,21 +410,21 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
     location = "our Malvern store";
   } else if (partyType == "Balwyn") {
     location = "our Balwyn store";
-  } // if neither condition met, must be travel. leave as is.
+  } // if neither condition met, must be mobile. leave as is.
   t.location = location;
   t.creationCount = creationCount;
   
   // attach correct invitations
   var inStoreInvitations3pp = DriveApp.getFilesByName("Fizz Kidz Invitations - 3pp.pdf").next();
   var inStoreInvitationsLarge = DriveApp.getFilesByName("Fizz Kidz Invitations - Large.pdf").next();
-  var travelPartyInvitations = DriveApp.getFilesByName("Fizz Kidz Travel Party Invitations.jpg").next();
+  var mobilePartyInvitations = DriveApp.getFilesByName("Fizz Kidz Travel Party Invitations.jpg").next();
   
   var attachments = [];
   if (partyType == "Malvern" || partyType == "Balwyn") {
     attachments.push(inStoreInvitations3pp);
     attachments.push(inStoreInvitationsLarge);
   } else {
-    attachments.push(travelPartyInvitations);
+    attachments.push(mobilePartyInvitations);
   }
   
   var body = t.evaluate().getContent();
@@ -467,7 +467,7 @@ function updateBooking() {
   
   var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
   var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
-  var travelPartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
+  var mobilePartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
   
   // determine which calendar we should use
   var calendarID;
@@ -478,7 +478,7 @@ function updateBooking() {
     calendarID = balwynStorePartiesCalendarID;
   }
   else {
-    calendarID = travelPartiesCalendarID;
+    calendarID = mobilePartiesCalendarID;
   }
   
   var event = CalendarApp.getCalendarById(calendarID).getEventById(eventID);
@@ -526,7 +526,7 @@ function deleteBooking() {
   // get event
   var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
   var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
-  var travelPartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
+  var mobilePartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
   
   // determine which calendar we should use
   var partyType = sheet.getRange('B10').getDisplayValue();
@@ -538,7 +538,7 @@ function deleteBooking() {
     calendarID = balwynStorePartiesCalendarID;
   }
   else {
-    calendarID = travelPartiesCalendarID;
+    calendarID = mobilePartiesCalendarID;
   }
   
   var event = CalendarApp.getCalendarById(calendarID).getEventById(eventID);
