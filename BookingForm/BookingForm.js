@@ -292,6 +292,7 @@ function beginWorkflow() {
     validateFields(parentName, mobileNumber, emailAddress, childName, childAge, dateOfParty, timeOfParty, partyLength, partyType, location, confirmationEmailRequired);
   } catch (err) {
     Logger.log(err);
+    return;
   }
   
   // store party details in a new file
@@ -325,14 +326,22 @@ function createCopyOfSheet(parentName, childName, childAge, dateOfParty, timeOfP
   var fileName = partyType + ": " + parentName + " / " + childName + " " + childAge + "th" + " : " + formattedTime;
 
   // search for existing folder of date, otherwise create a new one
-  var outputFolder = outputRootFolder.getFoldersByName(formattedDate);
+  var dateFolder = outputRootFolder.getFoldersByName(formattedDate);
   var newFile = null;
-  if(!outputFolder.hasNext()) { // no folder exists yet for that date
-    outputFolder = outputRootFolder.createFolder(formattedDate);
-    newFile = template.makeCopy(fileName, outputFolder);
+  if(!dateFolder.hasNext()) { // no folder exists yet for that date, create one
+    dateFolder = outputRootFolder.createFolder(formattedDate);
   } else {
-    newFile = template.makeCopy(fileName, outputFolder.next());
+    dateFolder = dateFolder.next();
   }
+  // search for the party type within the new folder
+  var partyTypeFolder = dateFolder.getFoldersByName(partyType);
+  if (!partyTypeFolder.hasNext()) { // no folder exists yet for that date and that type, create one
+    partyTypeFolder = dateFolder.createFolder(partyType);
+    newFile = template.makeCopy(fileName, partyTypeFolder);
+  } else {
+    newFile = template.makeCopy(fileName, partyTypeFolder.next());
+  }
+
   var newFileID = newFile.getId();
   
   // make required changes to this new file, such as removing confirmation email row, and validating store type only with chosen type
@@ -495,25 +504,37 @@ function updateBooking() {
   var currentFileID = SpreadsheetApp.getActiveSpreadsheet().getId();
   var currentFile = DriveApp.getFileById(currentFileID);
   var currentFolder = currentFile.getParents().next();
-  
-  // first remove file from current location
-  currentFolder.removeFile(currentFile);
+  var currentFolderParent = currentFolder.getParents().next();
   
   // update fileName
+  partyType = (partyType == "In-store") ? location : partyType;
   currentFile.setName(partyType + ": " + parentName + " / " + childName + " " + childAge + "th" + " : " + time);
   
   // insert into new location
-  var outputFolder = outputRootFolder.getFoldersByName(date);
-  if(!outputFolder.hasNext()) { // no folder exists yet for that date
-    outputFolder = outputRootFolder.createFolder(date);
-    outputFolder.addFile(currentFile);
+  var dateFolder = outputRootFolder.getFoldersByName(date);
+  if(!dateFolder.hasNext()) { // no folder exists yet for that date, create one
+    dateFolder = outputRootFolder.createFolder(date);
   } else {
-    outputFolder.next().addFile(currentFile);
+    dateFolder = dateFolder.next();
+  }
+  var partyTypeFolder = dateFolder.getFoldersByName(partyType);
+  if (!partyTypeFolder.hasNext()) { // no folder exists yet for that date and that party type, create one
+    partyTypeFolder = dateFolder.createFolder(partyType);
+    partyTypeFolder.addFile(currentFile);
+  } else {
+    partyTypeFolder.next().addFile(currentFile);
   }
   
-  // finally, if removing this file made that folder empty, delete the folder
+  // finally, remove the file
+  currentFolder.removeFile(currentFile);
+  // if removing this file made that folder empty, delete the folder
+  // if party type folder has no bookings, delete party type folder
   if (!currentFolder.getFiles().hasNext()) {
-    Drive.Files.remove(outputRootFolder.getId());
+    Drive.Files.remove(currentFolder.getId());
+  }
+  // if date folder has no party type folders, delete the folder
+  if (!currentFolderParent.getFolders().hasNext()) {
+    Drive.Files.remove(dateFolder.getId());
   }
 }
 
@@ -541,8 +562,13 @@ function deleteBooking() {
   Drive.Files.remove(currentFileID); // use advanced Drive service to permanently delete, not just place in bin
   
   // if deleting the booking sheet leaves this folder empty, delete the folder
+  // get folders parent folder (date folder)
+  var dateFolder = currentFolder.getParents().next();
   if (!currentFolder.getFiles().hasNext()) {
     Drive.Files.remove(currentFolder.getId());
+  }
+  if (!dateFolder.getFolders().hasNext()) {
+    Drive.Files.remove(dateFolder.getId());
   }
 }
 
