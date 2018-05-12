@@ -80,12 +80,7 @@ function sendPartyForm(bookingSheetID) {
   t.startTime = Utilities.formatDate(startDate, 'Australia/Sydney', 'hh:mm a');
   t.endTime = Utilities.formatDate(endDate, 'Australia/Sydney', 'hh:mm a');
   // determine location
-  if (partyType == "Malvern") {
-    location = "our Malvern store";
-  }
-  else if (partyType == "Balwyn") {
-    location = "our Balwyn store";
-  } // if neither conditions met, location must be travel so use existing location value
+  location = (partyType == "In-store") ? "our Malvern store" : location;
   t.location = location;
   t.preFilledURL = preFilledURL;
   
@@ -129,7 +124,7 @@ function getPreFilledFormURL(emailAddress, dateOfParty, parentName, mobileNumber
   var travelFormID = "14vQcTDdZSOniRaoOPdy-rnp8kyckWj44WjEbEnB3CE0";
   
   // open the correct form, create a response and get the items
-  var formID = (partyType == "Malvern" || partyType == "Balwyn") ? inStoreFormID : travelFormID;
+  var formID = (partyType == "In-store") ? inStoreFormID : travelFormID;
   var form = FormApp.openById(formID);
   var formResponse = form.createResponse();
   var formItems = form.getItems();
@@ -167,14 +162,6 @@ function getPreFilledFormURL(emailAddress, dateOfParty, parentName, mobileNumber
   var childAgeItem = formItems[4].asTextItem();
   response = childAgeItem.createResponse(childAge);
   formResponse.withItemResponse(response);
-  
-  // if an in-store party, fifth question is the store location
-  if (partyType == "Malvern" || partyType == "Balwyn") {
-    console.log(partyType);
-    var storeLocationItem = formItems[5].asMultipleChoiceItem();
-    response = storeLocationItem.createResponse(partyType);
-    formResponse.withItemResponse(response);
-  }
     
   return formResponse.toPrefilledUrl();
 }

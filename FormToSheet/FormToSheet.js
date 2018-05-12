@@ -2,6 +2,15 @@ function onSubmit(e) {
   
   console.log(e.values);
   console.log(e.values.length);
+
+  /**
+   * party type determined by number of questions
+   * 13 questions in the In-store form, 9 in the Mobile form
+   * Currently if in-store form, assuming Malvern. In future will need to add question as to which location
+   * (for searching for booking)
+   */
+  var partyType = (e.values.length == 13) ? "Malvern" : "Mobile";
+  console.log("Party type: " + partyType);
   
   var dateTime = e.values[1].split(" ");
   var date = dateTime[0].split("/");
@@ -17,44 +26,40 @@ function onSubmit(e) {
   var formattedTime = Utilities.formatDate(date, 'Australia/Sydney', 'hh:mm a');
   
   var parentName = e.values[2];
-  console.log(parentName);
+  console.log("Parent Name: " + parentName);
   
   var childName = e.values[3];
-  console.log(childName);
+  console.log("Child Name: " + childName);
   
   var childAge = e.values[4];
-  console.log(childAge);
+  console.log("Child age " + childAge);
+
+  var childrenCount = e.values[5];
+  console.log("Children Count: " + childrenCount);
   
-  // party type determined by number of questions
-  // 14 questions in the In-store form, 9 in the Travel form
-  var partyType = (e.values.length == 14) ? e.values[5] : "Travel";
-  console.log(partyType);
+  var creations = e.values[6];
+  console.log("Creations " + creations);
   
   // forms diverge from here, so get respective answers
-  if (partyType == "Malvern" || partyType == "Balwyn") {  
-    var childrenCount = e.values[5];
-    console.log(childrenCount);
-  
-    var creations = e.values[6];
-    console.log(creations);
+  if (partyType == "Malvern") {  
     
     var additions = e.values[7];
-    console.log(additions);
+    console.log("Additions: " + additions);
   
     var cakeRequired = e.values[8];
-    console.log(cakeRequired);
+    console.log("Cake required: " + cakeRequired);
     
     var selectedCake = e.values[9];
-    console.log(selectedCake);
+    console.log("Selected Cake: " + selectedCake);
     
     var cakeFlavour = e.values[10];
-    console.log(cakeFlavour);
+    console.log("Cake Falvour: " + cakeFlavour);
     
     var extraInfo = e.values[11];
-    console.log(extraInfo);
+    console.log("Extra Info: " + extraInfo);
     
     var questions = e.values[12];
-    console.log(questions);
+    console.log("Questions: " + questions);
     
     // if booking a cake, email Talia
     if (cakeRequired == "Yes please!") {
@@ -63,18 +68,12 @@ function onSubmit(e) {
     
     createPartySheet(formattedDate, formattedTime, parentName, childName, childAge, partyType, childrenCount, creations, additions, cakeRequired, selectedCake, cakeFlavour, extraInfo, questions);
     
-  } else {
-    var childrenCount = e.values[4];
-    console.log(childrenCount);
-  
-    var creations = e.values[5];
-    console.log(creations);
-    
+  } else {    
     var extraInfo = e.values[7];
-    console.log(extraInfo);
+    console.log("Extra Info: " + extraInfo);
   
     var questions = e.values[8];
-    console.log(questions);
+    console.log("Questions: " + questions);
     
     createPartySheet(formattedDate, formattedTime, parentName, childName, childAge, partyType, childrenCount, creations, "", "", "", "", extraInfo, questions);
   }
@@ -109,9 +108,9 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
   var newFile = null;
   if(!dateFolder.hasNext()) { // no folder exists yet for that date
     dateFolder = outputRootFolder.createFolder(date);
-    // when creating a date folder, also create 'In-Store' and 'Travel' folders within it
+    // when creating a date folder, also create 'In-Store' and 'Mobile' folders within it
     dateFolder.createFolder("In-Store");
-    dateFolder.createFolder("Travel");
+    dateFolder.createFolder("Mobile");
     var outputFolder = getCorrectOutputFolder(dateFolder, partyType);
     newFile = template.makeCopy(outputFolder);
   } else { // date folder exists
@@ -185,8 +184,8 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
   cell = table.getCell(11,1);
   cell.setText(extraInfo + "\n" + questions);
   
-  // if a travel party, add location on as a final row
-  if (partyType == "Travel") {
+  // if a mobile party, add location on as a final row
+  if (partyType == "Mobile") {
     var newRow = table.appendTableRow();
     var attributes = {}
     attributes[DocumentApp.Attribute.ITALIC] = true;
@@ -228,6 +227,7 @@ function locateBooking(date, time, parentName, childName, childAge, partyType) {
   // if the booking can't be found, email fizzkidz to alert them of error, and next steps
   
   // build the filename as it should be in the bookings folder
+  console.log(partyType);
   var fileName = partyType + ": " + parentName + " / " + childName + " " + childAge + "th" + " : " + time;
   var matchingFiles = DriveApp.getFilesByName(fileName);
   if (matchingFiles.hasNext()) {
@@ -281,7 +281,7 @@ function getCorrectOutputFolder(dateFolder, partyType) {
   if (partyType == "In-store") {
     outputFolder = dateFolder.getFoldersByName("In-Store").next();
   } else {
-    outputFolder = dateFolder.getFoldersByName("Travel").next();
+    outputFolder = dateFolder.getFoldersByName("Mobile").next();
   }
   return outputFolder;
 }

@@ -50,6 +50,19 @@ function onEdit(e) {
     
     // We're in range; update the booking
     updateBooking();
+  } else { // original booking form, validate store locations if in-store
+    var partyType = sheet.getRange('B10').getDisplayValue();
+    var locationCell = sheet.getRange('B11');
+    if (e.value == "Mobile") { // changed to a mobile party
+      locationCell.clearContent();
+      locationCell.clearDataValidations();
+    }
+    else if (e.value == "In-store") { // changed to an in-store party
+      locationCell.clearContent();
+      var helpText = "In-store party location must be 'Malvern'";
+      var rule = SpreadsheetApp.newDataValidation().requireValueInList(['Malvern']).setAllowInvalid(false).setHelpText(helpText).build();
+      locationCell.setDataValidation(rule);
+    }
   }
 }
 
@@ -112,7 +125,7 @@ function restoreValidation() {
   
   var partyType = sheet.getRange('B10').getDisplayValue();
   currentCell = sheet.getRange('B8');
-  if (partyType == "Malvern" || partyType == "Balwyn") {
+  if (partyType == "In-store") {
     helpText = "Party length must be either 1.5 or 2 hours";
     rule = SpreadsheetApp.newDataValidation().requireValueInList(['1.5','2']).setAllowInvalid(false).setHelpText(helpText).build();
   } else {
@@ -122,9 +135,15 @@ function restoreValidation() {
   currentCell.setDataValidation(rule);
   
   currentCell = sheet.getRange('B10');
-  helpText = "Party type/store-location cannot be edited. To change store location or convert to a mobile party, you must delete this booking and create a new one.";
+  helpText = "Party type cannot be edited. To change store location or convert to a mobile party, you must delete this booking and create a new one.";
   rule = SpreadsheetApp.newDataValidation().requireTextEqualTo(currentCell.getValue()).setAllowInvalid(false).setHelpText(helpText).build();
   currentCell.setDataValidation(rule);
+
+  if (partyType == "In-store") {
+    helpText = "An In-store location cannot be changed. To move the booking to a different store, delete this booking and create a new one";
+    rule = SpreadsheetApp.newDataValidation().requireTextEqualTo(currentCell.getDisplayValue()).setAllowInvalid(false).setHelpText(helpText).build();
+    currentCell.setDataValidation(rule);
+  }
   
   currentCell = sheet.getRange('B12');
   helpText = "Booking ID cannot be edited.";
@@ -147,99 +166,100 @@ function showDeleteConfirmationDialog() {
 function validateFields(parentName, mobileNumber, emailAddress, childName, childAge, dateOfParty, timeOfParty, partyLength, partyType, location, confirmationEmailRequired) {
   
   if(parentName == "") {
-    Browser.msgBox("You must enter the parents name. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter the parents name. Party not booked/updated. Try again.");
     throw new Error("You must enter the parents name. Operation cancelled.");
   }
   
   if(mobileNumber == "") {
-    Browser.msgBox("You must enter the mobile number. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter the mobile number. Party not booked/updated. Try again.");
     throw new Error("You must enter the mobile number. Operation cancelled.");
   }
   if (mobileNumber.length != 10) {
-    Browser.msgBox("Mobile number is not valid. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("Mobile number is not valid. Party not booked/updated. Try again.");
     throw new Error("Mobile number is not valid. Operation cancelled.");
   }
   
   if (emailAddress == "") {
-    Browser.msgBox("You must enter the email address. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter the email address. Party not booked/updated. Try again.");
     throw new Error("You must enter the email address. Operation cancelled.");
   }
   if (!validateEmail(emailAddress)) {
-    Browser.msgBox("You must enter the parents name. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter the parents name. Party not booked/updated. Try again.");
     throw new Error("You must enter the parents name. Operation cancelled.");
   }
   
   if(childName == "") {
-    Browser.msgBox("You must enter the childs name. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter the childs name. Party not booked/updated. Try again.");
     throw new Error("You must enter the childs name. Operation cancelled.");
   }
   
   if(childAge == "") {
-    Browser.msgBox("You must enter the childs age. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter the childs age. Party not booked/updated. Try again.");
     throw new Error("You must enter the childs age. Operation cancelled.");
   }
   
   if(dateOfParty == "") {
-    Browser.msgBox("You must enter the party date. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter the party date. Party not booked/updated. Try again.");
     throw new Error("You must enter the party date. Operation cancelled.");
   }
   if (!(dateOfParty instanceof Date)) {
-    Browser.msgBox("Party date is invalid. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("Party date is invalid. Party not booked/updated. Try again.");
     throw new Error("Party date is invalid. Operation cancelled");
   }
   
   if(timeOfParty == "") {
-    Browser.msgBox("You must enter the time of the party. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter the time of the party. Party not booked/updated. Try again.");
     throw new Error("You must enter the time of the party. Operation cancelled.");
   }
   if (!(timeOfParty instanceof Date)) {
-    Browser.msgBox("Party time is invalid. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("Party time is invalid. Party not booked/updated. Try again.");
     throw new Error("Party time is invalid. Operation cancelled.");
   }
   if (timeOfParty.getFullYear() == 1900) {
-    Browser.msgBox("Party time is invalid. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("Party time is invalid. Party not booked/updated. Try again.");
     throw new Error("Party time is invalid. Operation cancelled");
   }
  
   if(partyLength == "") {
-    Browser.msgBox("You must enter the length of the party. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter the length of the party. Party not booked/updated. Try again.");
     throw new Error("You must enter the length of the party. Operation cancelled.");
   }
   
   if(partyType == "") {
-    Browser.msgBox("You must enter the type of party as Malvern, Balwyn or Mobile. Party not updated/created. Try again, and ensure it updates in Calendar");
-    throw new Error("You must enter the type of party as Malvern, Balwyn or Mobile. Operation cancelled.");
+    Browser.msgBox("You must enter the type of party as In-store or Mobile. Party not booked/updated. Try again.");
+    throw new Error("You must enter the type of party as In-store or Mobile. Operation cancelled.");
   }
   // In-store must be 1.5 or 2 hours, Mobile must be 1 or 1.5 hours. Validate here
-  if (partyType == "Malvern" || partyType == "Balwyn") {
+  if (partyType == "In-store") {
     if (partyLength == "1") {
-      Browser.msgBox("An In-store party cannot have a party length of 1 hour. Party not updated/created. Try again, and ensure it updates in Calendar");
+      Browser.msgBox("An In-store party cannot have a party length of 1 hour. Party not booked/updated. Try again.");
       throw new Error("An In-store party cannot have a party length of 1 hour. Operation cancelled.");
     }
   }
   if (partyType == "Mobile") {
     if (partyLength == "2") {
-      Browser.msgBox("A Mobile party cannot have a party length of 2 hours Party not updated/created. Try again, and ensure it updates in Calendar");
+      Browser.msgBox("A Mobile party cannot have a party length of 2 hours Party not booked/updated. Try again.");
       throw new Error("A Mobile party cannot have a party length of 2 hours. Operation cancelled.");
     }
   }
   
-  if (location == "") {
-    if (partyType == "Mobile") {
-      Browser.msgBox("Mobile party must have a location. Party not updated/created. Try again, and ensure it updates in Calendar");
+  // mobile party must have a location
+  if (partyType == "Mobile") {
+    if (location == "") {
+      Browser.msgBox("Mobile party must have a location. Party not booked/updated. Try again.");
       throw new Error("Mobile party must have a location. Operation cancelled.");
     }
   }
-  // in store party cannot have a location
-  if (partyType == "Malvern" || partyType == "Balwyn") {
-    if (location != "") {
-      Browser.msgBox("An In-store party cannot have a location, clear the location field and try again");
+  // in-store party cannot have a location
+  if (partyType == "In-store") {
+    if (location != "Malvern") {
+      Browser.msgBox("An In-store party location must be 'Malvern'. Party not booked/updated. Try again.");
       throw new Error("In-store cannot have a location. Operation cancelled.");
     }
   }
   
   if(confirmationEmailRequired == "") {
-    Browser.msgBox("You must enter if a confirmation email is required. Party not updated/created. Try again, and ensure it updates in Calendar");
+    Browser.msgBox("You must enter if a confirmation email is required. Party not booked/updated. Try again.");
     throw new Error("You must enter if a confirmation email is required. Operation cancelled.");
   }
 }
@@ -268,10 +288,14 @@ function beginWorkflow() {
   var confirmationEmailRequired = sheet.getRange('B12').getDisplayValue();
   
   // validate the data
-  validateFields(parentName, mobileNumber, emailAddress, childName, childAge, dateOfParty, timeOfParty, partyLength, partyType, location, confirmationEmailRequired);
+  try {
+    validateFields(parentName, mobileNumber, emailAddress, childName, childAge, dateOfParty, timeOfParty, partyLength, partyType, location, confirmationEmailRequired);
+  } catch (err) {
+    Logger.log(err);
+  }
   
   // store party details in a new file
-  var fileID = createCopyOfSheet(parentName, childName, childAge, dateOfParty, timeOfParty, partyType);
+  var fileID = createCopyOfSheet(parentName, childName, childAge, dateOfParty, timeOfParty, partyType, location);
   
   // create the event
   createEvent(parentName, mobileNumber, childName, childAge, dateOfParty, timeOfParty, partyLength, partyType, location, fileID);
@@ -282,7 +306,7 @@ function beginWorkflow() {
   }
 }
 
-function createCopyOfSheet(parentName, childName, childAge, dateOfParty, timeOfParty, partyType) {
+function createCopyOfSheet(parentName, childName, childAge, dateOfParty, timeOfParty, partyType, location) {
   // 
   // This function will create a copy of the booking under Party Bookings -> Date of Party -> "Parent / Child : Time"
   // It returns the ID of this document, in order to attach it to the calendar event
@@ -296,10 +320,13 @@ function createCopyOfSheet(parentName, childName, childAge, dateOfParty, timeOfP
   var outputRootFolder = DriveApp.getFolderById("1fxxEQzVjjhO0q1rmU8GzpXeWdNvl_hpy");
   var template = DriveApp.getFileById("14pGuFT1Ru84XLiHhu9Hd43nl0o5dlgHlrxubU3F6yFo");
   
+  // create the filename. In-store use store name, Mobile use mobile
+  partyType = (partyType == "In-store") ? location : partyType;
+  var fileName = partyType + ": " + parentName + " / " + childName + " " + childAge + "th" + " : " + formattedTime;
+
   // search for existing folder of date, otherwise create a new one
   var outputFolder = outputRootFolder.getFoldersByName(formattedDate);
   var newFile = null;
-  var fileName = partyType + ": " + parentName + " / " + childName + " " + childAge + "th" + " : " + formattedTime;
   if(!outputFolder.hasNext()) { // no folder exists yet for that date
     outputFolder = outputRootFolder.createFolder(formattedDate);
     newFile = template.makeCopy(fileName, outputFolder);
@@ -328,10 +355,6 @@ function createEvent(parentName, mobileNumber, childName, childAge, dateOfParty,
   
   var endDate = determineEndDate(dateOfParty, timeOfParty, partyLength);
   
-  var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
-  var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
-  var mobilePartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
-  
   var eventObj = { 
     summary: eventName,
     start: {dateTime: startDate.toISOString()},
@@ -343,16 +366,9 @@ function createEvent(parentName, mobileNumber, childName, childAge, dateOfParty,
     }]
   };
   
-  var calendarID;
-  if (partyType == "Malvern") {
-    calendarID = malvernStorePartiesCalendarID;
-  }
-  else if (partyType == "Balwyn") {
-    calendarID = balwynStorePartiesCalendarID;
-  }
-  else {
-    calendarID = mobilePartiesCalendarID;
-  }
+  // determine which calendar to use
+  var calendarID = getCalendarID(partyType, location);
+
   var newEvent = Calendar.Events.insert(eventObj, calendarID, {'supportsAttachments': true});
   
   // now add this event ID to our booking sheet, in order to update/delete in the future
@@ -373,7 +389,7 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
   
   // Determine if making one or two creations
   var creationCount;
-  if (partyType == "Malvern" || partyType == "Balwyn") {
+  if (partyType == "In-store") {
     switch (partyLength) {
       case "1.5":
         creationCount = "two";
@@ -405,22 +421,19 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
   t.startDate = Utilities.formatDate(startDate, 'Australia/Sydney', 'EEEE d MMMM y');
   t.startTime = Utilities.formatDate(startDate, 'Australia/Sydney', 'hh:mm a');
   t.endTime = Utilities.formatDate(endDate, 'Australia/Sydney', 'hh:mm a');
-  // determine location
-  if (partyType == "Malvern") {
+  if (location == "Malvern") {
     location = "our Malvern store";
-  } else if (partyType == "Balwyn") {
-    location = "our Balwyn store";
-  } // if neither condition met, must be mobile. leave as is.
+  }
   t.location = location;
   t.creationCount = creationCount;
   
   // attach correct invitations
   var inStoreInvitations3pp = DriveApp.getFilesByName("Fizz Kidz Invitations - 3pp.pdf").next();
   var inStoreInvitationsLarge = DriveApp.getFilesByName("Fizz Kidz Invitations - Large.pdf").next();
-  var mobilePartyInvitations = DriveApp.getFilesByName("Fizz Kidz Travel Party Invitations.jpg").next();
+  var mobilePartyInvitations = DriveApp.getFilesByName("Fizz Kidz Mobile Party Invitations.jpg").next();
   
   var attachments = [];
-  if (partyType == "Malvern" || partyType == "Balwyn") {
+  if (partyType == "In-store") {
     attachments.push(inStoreInvitations3pp);
     attachments.push(inStoreInvitationsLarge);
   } else {
@@ -465,21 +478,8 @@ function updateBooking() {
   
   var endDate = determineEndDate(dateOfParty, timeOfParty, partyLength);
   
-  var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
-  var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
-  var mobilePartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
-  
   // determine which calendar we should use
-  var calendarID;
-  if (partyType == "Malvern") {
-    calendarID = malvernStorePartiesCalendarID;
-  }
-  else if (partyType == "Balwyn") {
-    calendarID = balwynStorePartiesCalendarID;
-  }
-  else {
-    calendarID = mobilePartiesCalendarID;
-  }
+  var calendarID = getCalendarID(partyType, location);
   
   var event = CalendarApp.getCalendarById(calendarID).getEventById(eventID);
   
@@ -520,26 +520,13 @@ function updateBooking() {
 function deleteBooking() {
   var sheet = SpreadsheetApp.getActive();
   
-  // since deleting, all we need is the event id
+  // since deleting, all we need is the event id and which calendar
   var eventID = sheet.getRange('B12').getDisplayValue();
-
-  // get event
-  var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
-  var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
-  var mobilePartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
   
   // determine which calendar we should use
   var partyType = sheet.getRange('B10').getDisplayValue();
-  var calendarID;
-  if (partyType == "Malvern") {
-    calendarID = malvernStorePartiesCalendarID;
-  }
-  else if (partyType == "Balwyn") {
-    calendarID = balwynStorePartiesCalendarID;
-  }
-  else {
-    calendarID = mobilePartiesCalendarID;
-  }
+  var location = sheet.getRange('B11').getDisplayValue();
+  var calendarID = getCalendarID(partyType, location);
   
   var event = CalendarApp.getCalendarById(calendarID).getEventById(eventID);
   
@@ -557,6 +544,27 @@ function deleteBooking() {
   if (!currentFolder.getFiles().hasNext()) {
     Drive.Files.remove(currentFolder.getId());
   }
+}
+
+function getCalendarID(partyType, location) {
+
+  // event IDs
+  var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
+  var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
+  var mobilePartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
+
+  var calendarID;
+  if (partyType == "In-store") {
+    if (location == "Malvern") {
+      calendarID = malvernStorePartiesCalendarID;
+    } else if (location == "Balwyn") {
+      calendarID = balwynStorePartiesCalendarID;
+    }
+  } else {
+    calendarID = mobilePartiesCalendarID;
+  }
+
+  return calendarID;
 }
 
 function lockDownCells(sheet) {
@@ -604,7 +612,7 @@ function resetSheet() {
   var sheet = SpreadsheetApp.getActiveSheet();
   var range = sheet.getRange('B1:B9');
   range.clear({ contentsOnly : true });
-  sheet.getRange('B10').setValue('Malvern');
+  sheet.getRange('B10').setValue('In-store');
   sheet.getRange('B11').clear({ contentsOnly : true });
   sheet.getRange('B12').setValue('YES');
 }
