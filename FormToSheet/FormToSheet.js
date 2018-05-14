@@ -108,10 +108,10 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
   var newFile = null;
   if(!dateFolder.hasNext()) { // no folder exists yet for that date
     dateFolder = outputRootFolder.createFolder(date);
-    // when creating a date folder, also create 'In-Store' and 'Mobile' folders within it
-    dateFolder.createFolder("In-Store");
+    // when creating a date folder, also create each store and 'Mobile' folders within it
+    dateFolder.createFolder("Malvern");
     dateFolder.createFolder("Mobile");
-    var outputFolder = getCorrectOutputFolder(dateFolder, partyType);
+    var outputFolder = getCorrectOutputFolder(dateFolder, partyType, location);
     newFile = template.makeCopy(outputFolder);
   } else { // date folder exists
     var outputFolder = getCorrectOutputFolder(dateFolder.next(), partyType);
@@ -275,11 +275,11 @@ function sendQuestionsNotification(date, time, parentName, emailAddress, childNa
   GmailApp.sendEmail('info@fizzkidz.com.au', subject, "", {htmlBody: body, name : "Fizz Kidz"});
 }
 
-function getCorrectOutputFolder(dateFolder, partyType) {
+function getCorrectOutputFolder(dateFolder, partyType, location) {
   
   var outputFolder;
   if (partyType == "In-store") {
-    outputFolder = dateFolder.getFoldersByName("In-Store").next();
+    outputFolder = dateFolder.getFoldersByName(location).next();
   } else {
     outputFolder = dateFolder.getFoldersByName("Mobile").next();
   }

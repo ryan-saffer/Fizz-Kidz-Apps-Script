@@ -61,7 +61,8 @@ function onEdit(e) {
       locationCell.clearContent();
       var helpText = "In-store party location must be 'Malvern'";
       var rule = SpreadsheetApp.newDataValidation().requireValueInList(['Malvern']).setAllowInvalid(false).setHelpText(helpText).build();
-      locationCell.setDataValidation(rule);
+      locationCell.setDataValidation(rule)
+      locationCell.setValue("Malvern");
     }
   }
 }

@@ -1,8 +1,8 @@
 function main() {
   
   var dateToday = new Date();
-  var nextWeekendStartDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 2);
-  var nextWeekendEndDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 4);
+  var nextWeekendStartDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 1);
+  var nextWeekendEndDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 3);
   
   var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
   var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
@@ -37,14 +37,7 @@ function main() {
   }
   
   // while we are here, lets also move the current weekends party sheets into the malvern stores folder
-  var friday = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 1);
-  var saturday = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 2);
-  var sunday = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 3);
-  var fridayFormatted = Utilities.formatDate(friday, 'Australia/Sydney', "MMM d y");
-  var saturdayFormatted = Utilities.formatDate(saturday, 'Australia/Sydney', "MMM d y");
-  var sundayFormatted = Utilities.formatDate(sunday, 'Australia/Sydney', "MMM d y");
-  var dates = [fridayFormatted, saturdayFormatted, sundayFormatted];
-  shareCurrentWeekend(dates);
+  shareCurrentWeekend();
 }
 
 function sendPartyForm(bookingSheetID) {
@@ -166,7 +159,18 @@ function getPreFilledFormURL(emailAddress, dateOfParty, parentName, mobileNumber
   return formResponse.toPrefilledUrl();
 }
 
-function shareCurrentWeekend(dates) {
+function shareCurrentWeekend() {
+  
+  var dateToday = new Date();
+  var friday = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 1);
+  var saturday = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 2);
+  var sunday = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 3);
+  var fridayFormatted = Utilities.formatDate(friday, 'Australia/Sydney', "MMM d y");
+  var saturdayFormatted = Utilities.formatDate(saturday, 'Australia/Sydney', "MMM d y");
+  var sundayFormatted = Utilities.formatDate(sunday, 'Australia/Sydney', "MMM d y");
+  var dates = [fridayFormatted, saturdayFormatted, sundayFormatted];
+  
+  console.log(dates);
   
   var partySheetsFolder = DriveApp.getFolderById("1EoQxIm6wP8TCZR7EJboZrPygWcy2fb7z");
   var outputFolder = DriveApp.getFolderById("1n2CLk3uJLKx-Rn5HFR7CuEyW17nhO5f-");
