@@ -480,7 +480,12 @@ function updateBooking() {
     throw new Error("Error updating party. EventID was not found");
   }
   
-  validateFields(parentName, mobileNumber, emailAddress, childName, childAge, dateOfParty, timeOfParty, partyLength, partyType, location, null);
+  try {
+    validateFields(parentName, mobileNumber, emailAddress, childName, childAge, dateOfParty, timeOfParty, partyLength, partyType, location, null);
+  } catch (err) {
+    Logger.log(err);
+    return;
+  }
   
   // get the start time and end time
   var eventName = parentName + " / " + childName + " " + childAge + "th " + mobileNumber;
