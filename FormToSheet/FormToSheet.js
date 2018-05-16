@@ -114,7 +114,7 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
     var outputFolder = getCorrectOutputFolder(dateFolder, partyType, location);
     newFile = template.makeCopy(outputFolder);
   } else { // date folder exists
-    var outputFolder = getCorrectOutputFolder(dateFolder.next(), partyType);
+    var outputFolder = getCorrectOutputFolder(dateFolder.next(), partyType, location);
     newFile = template.makeCopy(outputFolder);
   }
   newFile.setName(parentName + " / " + childName + " : " + time);
@@ -194,6 +194,10 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
     newRow.appendTableCell(location).setAttributes(attributes);
   }
   
+  // make the booking sheet obvious that it should not be edited
+  // provide URL to the party sheet
+  lockDownSheet(sheet, newFile);
+
   // finally, send a confirmation email
   // this is done inside this function, since we have already retrieved email address from the booking sheet
   sendThankYouEmail(emailAddress, parentName, childrenCount, creations, additions, cakeRequired, selectedCake, cakeFlavour, partyType, questions);
@@ -237,6 +241,18 @@ function locateBooking(date, time, parentName, childName, childAge, partyType) {
     sendErrorEmail(parentName, childName, childAge, date, time, partyType);
     return null;
   }
+} 
+
+function lockDownSheet(sheet, newFile) {
+  var range = sheet.getRange('B1:B12');
+  var helpText = "The party sheet has already been generated from this booking. Go there to make any changes.";
+  for (var i = 1; i <= range.getHeight(); i++) {
+    var currentCell = range.getCell(i,1);
+    var rule = SpreadsheetApp.newDataValidation().requireTextEqualTo(currentCell.getDisplayValue()).setAllowInvalid(false).setHelpText(helpText).build();
+    currentCell.setDataValidation(rule);
+  }
+  sheet.getRange('A13').setValue("Party sheet already generated. Go there to make any changes:").setFontSize(15).setFontColor('red').setWrap(true);
+  sheet.getRange('B13').setValue(newFile.getUrl()).setFontSize(15);
 }
 
 function sendCakeNotification(date, time, parentName, childName, selectedCake, cakeFlavour) {
