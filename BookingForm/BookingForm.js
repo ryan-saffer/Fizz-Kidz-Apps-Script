@@ -58,13 +58,21 @@ function onEdit(e) {
       locationCell.clearDataValidations();
     }
     else if (e.value == "In-store") { // changed to an in-store party
-      locationCell.clearContent();
-      var helpText = "In-store party location must be 'Malvern'";
-      var rule = SpreadsheetApp.newDataValidation().requireValueInList(['Malvern']).setAllowInvalid(false).setHelpText(helpText).build();
-      locationCell.setDataValidation(rule)
-      locationCell.setValue("Malvern");
+      validateLocationCell(locationCell);
     }
   }
+}
+
+function validateLocationCell(locationCell) {
+  /*
+   * This function applies a dataValidation to the locationCell
+   * such that it must be one of the store locations.
+   */
+  locationCell.clearContent();
+  var helpText = "In-store party location must be 'Malvern'";
+  var rule = SpreadsheetApp.newDataValidation().requireValueInList(['Malvern']).setAllowInvalid(false).setHelpText(helpText).build();
+  locationCell.setDataValidation(rule)
+  locationCell.setValue("Malvern");
 }
 
 function showBookingConfirmationDialog() {
@@ -167,79 +175,79 @@ function showDeleteConfirmationDialog() {
 function validateFields(parentName, mobileNumber, emailAddress, childName, childAge, dateOfParty, timeOfParty, partyLength, partyType, location, confirmationEmailRequired) {
   
   if(parentName == "") {
-    Browser.msgBox("You must enter the parents name. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the parents name. Party not booked/updated. Try again.");
     throw new Error("You must enter the parents name. Operation cancelled.");
   }
   
   if(mobileNumber == "") {
-    Browser.msgBox("You must enter the mobile number. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the mobile number. Party not booked/updated. Try again.");
     throw new Error("You must enter the mobile number. Operation cancelled.");
   }
   if (mobileNumber.length != 10) {
-    Browser.msgBox("Mobile number is not valid. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️Mobile number is not valid. Party not booked/updated. Try again.");
     throw new Error("Mobile number is not valid. Operation cancelled.");
   }
   
   if (emailAddress == "") {
-    Browser.msgBox("You must enter the email address. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the email address. Party not booked/updated. Try again.");
     throw new Error("You must enter the email address. Operation cancelled.");
   }
   if (!validateEmail(emailAddress)) {
-    Browser.msgBox("You must enter the parents name. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the parents name. Party not booked/updated. Try again.");
     throw new Error("You must enter the parents name. Operation cancelled.");
   }
   
   if(childName == "") {
-    Browser.msgBox("You must enter the childs name. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the childs name. Party not booked/updated. Try again.");
     throw new Error("You must enter the childs name. Operation cancelled.");
   }
   
   if(childAge == "") {
-    Browser.msgBox("You must enter the childs age. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the childs age. Party not booked/updated. Try again.");
     throw new Error("You must enter the childs age. Operation cancelled.");
   }
   
   if(dateOfParty == "") {
-    Browser.msgBox("You must enter the party date. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the party date. Party not booked/updated. Try again.");
     throw new Error("You must enter the party date. Operation cancelled.");
   }
   if (!(dateOfParty instanceof Date)) {
-    Browser.msgBox("Party date is invalid. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️Party date is invalid. Party not booked/updated. Try again.");
     throw new Error("Party date is invalid. Operation cancelled");
   }
   
   if(timeOfParty == "") {
-    Browser.msgBox("You must enter the time of the party. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the time of the party. Party not booked/updated. Try again.");
     throw new Error("You must enter the time of the party. Operation cancelled.");
   }
   if (!(timeOfParty instanceof Date)) {
-    Browser.msgBox("Party time is invalid. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️Party time is invalid. Party not booked/updated. Try again.");
     throw new Error("Party time is invalid. Operation cancelled.");
   }
   if (timeOfParty.getFullYear() == 1900) {
-    Browser.msgBox("Party time is invalid. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️Party time is invalid. Party not booked/updated. Try again.");
     throw new Error("Party time is invalid. Operation cancelled");
   }
  
   if(partyLength == "") {
-    Browser.msgBox("You must enter the length of the party. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the length of the party. Party not booked/updated. Try again.");
     throw new Error("You must enter the length of the party. Operation cancelled.");
   }
   
   if(partyType == "") {
-    Browser.msgBox("You must enter the type of party as In-store or Mobile. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter the type of party as In-store or Mobile. Party not booked/updated. Try again.");
     throw new Error("You must enter the type of party as In-store or Mobile. Operation cancelled.");
   }
   // In-store must be 1.5 or 2 hours, Mobile must be 1 or 1.5 hours. Validate here
   if (partyType == "In-store") {
     if (partyLength == "1") {
-      Browser.msgBox("An In-store party cannot have a party length of 1 hour. Party not booked/updated. Try again.");
+      Browser.msgBox("⚠️An In-store party cannot have a party length of 1 hour. Party not booked/updated. Try again.");
       throw new Error("An In-store party cannot have a party length of 1 hour. Operation cancelled.");
     }
   }
   if (partyType == "Mobile") {
     if (partyLength == "2") {
-      Browser.msgBox("A Mobile party cannot have a party length of 2 hours Party not booked/updated. Try again.");
+      Browser.msgBox("⚠️A Mobile party cannot have a party length of 2 hours Party not booked/updated. Try again.");
       throw new Error("A Mobile party cannot have a party length of 2 hours. Operation cancelled.");
     }
   }
@@ -247,20 +255,20 @@ function validateFields(parentName, mobileNumber, emailAddress, childName, child
   // mobile party must have a location
   if (partyType == "Mobile") {
     if (location == "") {
-      Browser.msgBox("Mobile party must have a location. Party not booked/updated. Try again.");
+      Browser.msgBox("⚠️Mobile party must have a location. Party not booked/updated. Try again.");
       throw new Error("Mobile party must have a location. Operation cancelled.");
     }
   }
   // in-store party cannot have a location
   if (partyType == "In-store") {
     if (location != "Malvern") {
-      Browser.msgBox("An In-store party location must be 'Malvern'. Party not booked/updated. Try again.");
+      Browser.msgBox("⚠️An In-store party location must be 'Malvern'. Party not booked/updated. Try again.");
       throw new Error("In-store cannot have a location. Operation cancelled.");
     }
   }
   
   if(confirmationEmailRequired == "") {
-    Browser.msgBox("You must enter if a confirmation email is required. Party not booked/updated. Try again.");
+    Browser.msgBox("⚠️You must enter if a confirmation email is required. Party not booked/updated. Try again.");
     throw new Error("You must enter if a confirmation email is required. Operation cancelled.");
   }
 }
@@ -645,6 +653,6 @@ function resetSheet() {
   var range = sheet.getRange('B1:B9');
   range.clear({ contentsOnly : true });
   sheet.getRange('B10').setValue('In-store');
-  sheet.getRange('B11').clear({ contentsOnly : true });
+  validateLocationCell(sheet.getRange('B11'));
   sheet.getRange('B12').setValue('YES');
 }
