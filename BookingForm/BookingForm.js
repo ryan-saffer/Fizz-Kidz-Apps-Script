@@ -18,7 +18,7 @@ function onOpen() {
     .addToUi();
     
     // we have loaded, so clear the loading cell
-    SpreadsheetApp.getActive().getRange('D1').clear();
+    SpreadsheetApp.getActive().getRange('C1').clear();
   }
 }
 
@@ -49,7 +49,8 @@ function onEdit(e) {
     if (thisCol < editRange.left || thisCol > editRange.right) return;
     
     // We're in range; update the booking
-    updateBooking();
+    updateBooking(e);
+      
   } else { // original booking form, validate store locations if in-store
     var partyType = sheet.getRange('B10').getDisplayValue();
     var locationCell = sheet.getRange('B11');
@@ -358,7 +359,7 @@ function createCopyOfSheet(parentName, childName, childAge, dateOfParty, timeOfP
   sheet.deleteRow(12);
   
   // set a cell to indicate loading - it will be removed in the onOpen trigger
-  sheet.getRange('D1').setValue("LOADING FIZZ OPTIONS...").setFontSize(15).setFontColor('red');
+  sheet.getRange('C1').setValue("LOADING FIZZ OPTIONS...").setFontSize(15).setFontColor('red');
   
   // lock down the cells, until they enable editing
   lockDownCells(sheet);
@@ -466,7 +467,7 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
   GmailApp.sendEmail(emailAddress, subject, "", {htmlBody: body + signature, name : "Fizz Kidz", attachments : attachments});
 }
 
-function updateBooking() {
+function updateBooking(e) {
   var sheet = SpreadsheetApp.getActive();
   
   var parentName = sheet.getRange('B1').getDisplayValue();
@@ -524,6 +525,18 @@ function updateBooking() {
   partyType = (partyType == "In-store") ? location : partyType;
   currentFile.setName(partyType + ": " + parentName + " / " + childName + " " + childAge + "th" + " : " + time);
   
+  // determine if the date was changed. If so, re-organise file in Drive. If not, we are done!
+  var editedRow = e.range.getRow();
+  var editedColumn = e.range.getColumn();
+  if (editedRow != 6 || editedColumn != 2) { // not editing date cell, update is finished
+    return;
+  } else { // editing date cell
+    if (parseInt(e.oldValue) == parseInt(e.value)) {
+      // date has not changed, so update is finished
+      return;
+    }
+  }
+  
   // insert into new location
   var dateFolder = outputRootFolder.getFoldersByName(date);
   if(!dateFolder.hasNext()) { // no folder exists yet for that date, create one
@@ -548,7 +561,7 @@ function updateBooking() {
   }
   // if date folder has no party type folders, delete the folder
   if (!currentFolderParent.getFolders().hasNext()) {
-    Drive.Files.remove(dateFolder.getId());
+    Drive.Files.remove(currentFolderParent.getId());
   }
 }
 
