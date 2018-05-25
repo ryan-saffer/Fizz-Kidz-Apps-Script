@@ -93,6 +93,7 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
   var sheet = SpreadsheetApp.openById(bookingSheetID);
   var contactNumber = sheet.getRange('B2').getDisplayValue();
   var emailAddress = sheet.getRange('B3').getDisplayValue();
+  var childAge = sheet.getRange('B5').getDisplayValue();
   var partyLength = sheet.getRange('B8').getDisplayValue();
   var notes = sheet.getRange('B9').getDisplayValue();
   var partyType = sheet.getRange('B10').getDisplayValue();
@@ -117,7 +118,7 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
     var outputFolder = getCorrectOutputFolder(dateFolder.next(), partyType, location);
     newFile = template.makeCopy(outputFolder);
   }
-  newFile.setName(parentName + " / " + childName + " : " + time);
+  newFile.setName(time + ": " + parentName + " / " + childName + " " + childAge + "th");
   var newFileID = newFile.getId();
   
   // open the new document
