@@ -466,9 +466,53 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
   var body = t.evaluate().getContent();
   var subject = "Party Booking Confirmation";
   var signature = getGmailSignature();
+
+  // determine which account to send from
+  var fromAddress = determineFromEmailAddress(location);
   
   // Send the confirmation email
-  GmailApp.sendEmail(emailAddress, subject, "", {htmlBody: body + signature, name : "Fizz Kidz", attachments : attachments});
+  GmailApp.sendEmail(emailAddress, subject, "", {from: fromAddress, htmlBody: body + signature, name : "Fizz Kidz", attachments : attachments});
+}
+
+function determineFromEmailAddress(location) {
+  /*
+   * Returns the email address that the email should be sent from.
+   * If Talia logged in and booking in Malvern, return alias
+   * If Romy logged in and booking in Balwyn, return alias
+   * Otherwise just return their current email
+   */
+
+  var currentEmail = Session.getActiveUser().getEmail();
+
+  if(location == "Malvern") {
+    // send from malvern@fizzkidz.com.au
+    
+    if(currentEmail == "malvern@fizzkidz.com.au") {
+      return currentEmail;
+    }
+    else {
+      return GmailApp.getAliases()[0];
+    }
+  }
+  else if(location == "Balwyn") {
+    // send from info@fizzkidz.com.au
+
+    if (currentEmail == "info@fizzkidz.com.au") {
+      return currentEmail;
+    }
+    else {
+      return GmailApp.getAliases()[0];
+    }
+  }
+  else { // mobile party
+    // send from info@fizzkidz.com.au
+    if(currentEmail == "info@fizzkidz.com.au") {
+      return currentEmail;
+    }
+    else {
+      return GmailApp.getAliases()[0];
+    }
+  }
 }
 
 function updateBooking(e) {
