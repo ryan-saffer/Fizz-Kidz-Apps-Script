@@ -62,7 +62,7 @@ function sendPartyForm(bookingSheetID) {
   var endDate = determineEndDate(dateOfParty, timeOfParty, partyLength);
   
   // create a pre-filled form URL
-  var preFilledURL = getPreFilledFormURL(emailAddress, startDate, parentName, mobileNumber, childName, childAge, partyLength, partyType, bookingSheetID);
+  var preFilledURL = getPreFilledFormURL(emailAddress, startDate, parentName, mobileNumber, childName, childAge, partyLength, partyType, location, bookingSheetID);
   
   // Using the HTML email template, inject the variables and get the content
   var t = HtmlService.createTemplateFromFile('party_form_email_template');
@@ -73,7 +73,9 @@ function sendPartyForm(bookingSheetID) {
   t.startTime = Utilities.formatDate(startDate, 'Australia/Sydney', 'hh:mm a');
   t.endTime = Utilities.formatDate(endDate, 'Australia/Sydney', 'hh:mm a');
   // determine location
-  location = (partyType == "In-store") ? "our Malvern store" : location;
+  if (partyType == "In-store") {
+    location = (location == "Malvern") ? "our Malvern store" : "our Balwyn store";
+  }
   t.location = location;
   t.preFilledURL = preFilledURL;
   
@@ -110,7 +112,7 @@ function determineEndDate(dateOfParty, timeOfParty, partyLength) {
   return endDate;
 }
 
-function getPreFilledFormURL(emailAddress, dateOfParty, parentName, mobileNumber, childName, childAge, partyLength, partyType, bookingSheetID) {
+function getPreFilledFormURL(emailAddress, dateOfParty, parentName, mobileNumber, childName, childAge, partyLength, partyType, location, bookingSheetID) {
 
   // form IDs
   var inStoreFormID = "1LH52NazS74FuIv1bisZ1kMQuEeC8l5RRT-5f7TzK1n4";
@@ -155,6 +157,13 @@ function getPreFilledFormURL(emailAddress, dateOfParty, parentName, mobileNumber
   var childAgeItem = formItems[4].asTextItem();
   response = childAgeItem.createResponse(childAge);
   formResponse.withItemResponse(response);
+
+  // fifth question - location - only if in-store
+  if (partyType == "In-store") {
+    var locationItem = formItems[5].asMultipleChoiceItem();
+    response = locationItem.createResponse(location);
+    formResponse.withItemResponse(response);
+  }
     
   return formResponse.toPrefilledUrl();
 }

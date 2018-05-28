@@ -4,12 +4,10 @@ function onSubmit(e) {
   console.log(e.values.length);
 
   /**
-   * party type determined by number of questions
-   * 13 questions in the In-store form, 9 in the Mobile form
-   * Currently if in-store form, assuming Malvern. In future will need to add question as to which location
-   * (for searching for booking)
+   * Party type determined by number of questions
+   * 14 questions in the In-store form, 9 in the Mobile form
    */
-  var partyType = (e.values.length == 13) ? "Malvern" : "Mobile";
+  var partyType = (e.values.length == 14) ? e.values[5] : "Mobile";
   console.log("Party type: " + partyType);
   
   var dateTime = e.values[1].split(" ");
@@ -34,31 +32,32 @@ function onSubmit(e) {
   var childAge = e.values[4];
   console.log("Child age " + childAge);
 
-  var childrenCount = e.values[5];
-  console.log("Children Count: " + childrenCount);
-  
-  var creations = e.values[6];
-  console.log("Creations " + creations);
-  
   // forms diverge from here, so get respective answers
-  if (partyType == "Malvern") {  
+  if (partyType == "Malvern" || partyType == "Balwyn") {
     
-    var additions = e.values[7];
+    // question 5 is Malvern or Balwyn, so skip to 6
+    var childrenCount = e.values[6];
+    console.log("Children Count: " + childrenCount);
+  
+    var creations = e.values[7];
+    console.log("Creations " + creations);
+
+    var additions = e.values[8];
     console.log("Additions: " + additions);
   
-    var cakeRequired = e.values[8];
+    var cakeRequired = e.values[9];
     console.log("Cake required: " + cakeRequired);
     
-    var selectedCake = e.values[9];
+    var selectedCake = e.values[10];
     console.log("Selected Cake: " + selectedCake);
     
-    var cakeFlavour = e.values[10];
+    var cakeFlavour = e.values[11];
     console.log("Cake Falvour: " + cakeFlavour);
     
-    var extraInfo = e.values[11];
+    var extraInfo = e.values[12];
     console.log("Extra Info: " + extraInfo);
     
-    var questions = e.values[12];
+    var questions = e.values[13];
     console.log("Questions: " + questions);
     
     // if booking a cake, email Talia
@@ -67,8 +66,14 @@ function onSubmit(e) {
     }
     
     createPartySheet(formattedDate, formattedTime, parentName, childName, childAge, partyType, childrenCount, creations, additions, cakeRequired, selectedCake, cakeFlavour, extraInfo, questions);
-    
-  } else {    
+  
+  } else {
+    var childrenCount = e.values[5];
+    console.log("Children Count: " + childrenCount);
+  
+    var creations = e.values[6];
+    console.log("Creations " + creations);
+
     var extraInfo = e.values[7];
     console.log("Extra Info: " + extraInfo);
   
@@ -110,6 +115,7 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
   if(!dateFolder.hasNext()) { // no folder exists yet for that date
     dateFolder = outputRootFolder.createFolder(date);
     // when creating a date folder, also create each store and 'Mobile' folders within it
+    dateFolder.createFolder("Balwyn");
     dateFolder.createFolder("Malvern");
     dateFolder.createFolder("Mobile");
     var outputFolder = getCorrectOutputFolder(dateFolder, partyType, location);

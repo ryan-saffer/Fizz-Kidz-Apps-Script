@@ -70,8 +70,8 @@ function validateLocationCell(locationCell) {
    * such that it must be one of the store locations.
    */
   locationCell.clearContent();
-  var helpText = "In-store party location must be 'Malvern'";
-  var rule = SpreadsheetApp.newDataValidation().requireValueInList(['Malvern']).setAllowInvalid(false).setHelpText(helpText).build();
+  var helpText = "In-store party location must be 'Malvern' or 'Balwyn'";
+  var rule = SpreadsheetApp.newDataValidation().requireValueInList(['Malvern', 'Balwyn']).setAllowInvalid(false).setHelpText(helpText).build();
   locationCell.setDataValidation(rule)
   locationCell.setValue("Malvern");
 }
@@ -262,9 +262,9 @@ function validateFields(parentName, mobileNumber, emailAddress, childName, child
   }
   // in-store party cannot have a location
   if (partyType == "In-store") {
-    if (location != "Malvern") {
-      Browser.msgBox("⚠️An In-store party location must be 'Malvern'. Party not booked/updated. Try again.");
-      throw new Error("In-store cannot have a location. Operation cancelled.");
+    if (location != "Malvern" && location != "Balwyn") {
+      Browser.msgBox("⚠️An In-store party location must be 'Malvern' or 'Balwyn'. Party not booked/updated. Try again.");
+      throw new Error("In-store party location must be Malern or Balwyn. Operation cancelled.");
     }
   }
   
@@ -442,6 +442,9 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
   t.endTime = Utilities.formatDate(endDate, 'Australia/Sydney', 'hh:mm a');
   if (location == "Malvern") {
     location = "our Malvern store";
+  }
+  else if (location == "Balwyn") {
+    location = "our Balwyn store";
   }
   t.location = location;
   t.creationCount = creationCount;
