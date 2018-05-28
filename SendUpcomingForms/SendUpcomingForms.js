@@ -73,18 +73,41 @@ function sendPartyForm(bookingSheetID) {
   t.startTime = Utilities.formatDate(startDate, 'Australia/Sydney', 'hh:mm a');
   t.endTime = Utilities.formatDate(endDate, 'Australia/Sydney', 'hh:mm a');
   // determine location
+  var updated_location = location;
   if (partyType == "In-store") {
-    location = (location == "Malvern") ? "our Malvern store" : "our Balwyn store";
+    updated_location = (location == "Malvern") ? "our Malvern store" : "our Balwyn store";
   }
-  t.location = location;
+  t.location = updated_location;
   t.preFilledURL = preFilledURL;
   
   var body = t.evaluate().getContent();
   var subject = "Information Regarding Your Upcoming Party!";
-  var signature = getGmailSignature();
+
+  // determine the from email address
+  var fromAddress = determineFromEmailAddress(location);
+
+  var signature = getGmailSignature(fromAddress);
   
   // Send the confirmation email
-  GmailApp.sendEmail(emailAddress, subject, "", {htmlBody : body + signature, name : "Fizz Kidz"});
+  GmailApp.sendEmail(emailAddress, subject, "", {from: fromAddress, htmlBody : body + signature, name : "Fizz Kidz"});
+}
+
+function determineFromEmailAddress(location) {
+  /**
+   * If location is Malvern send from malvern@fizzkidz.com.au
+   * If location is Balwyn send from info@fizzkidz.com.au
+   * If location is neither (mobile) send from info@fizzkidz.com.au
+   */
+  
+  if (location == "Malvern") {
+    return GmailApp.getAliases()[0];
+  }
+  else if (location == "Balwyn") {
+    return Session.getActiveUser().getEmail();
+  }
+  else {
+    return Session.getActiveUser().getEmail();
+  }
 }
 
 function determineEndDate(dateOfParty, timeOfParty, partyLength) {
@@ -200,7 +223,13 @@ function shareCurrentWeekend() {
   }
 }
 
-function getGmailSignature() {
-  var draft = GmailApp.search("subject:signature label:draft", 0, 1);
+function getGmailSignature(fromAddress) {
+  var draft;
+  if (fromAddress == "info@fizzkidz.com.au") {
+    draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
+  }
+  else if (fromAddress = "malvern@fizzkidz.com.au") {
+    draft = GmailApp.search("subject:romy-signature label:draft", 0, 1);
+  }
   return draft[0].getMessages()[0].getBody();
 }

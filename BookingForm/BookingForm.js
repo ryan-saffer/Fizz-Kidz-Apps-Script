@@ -465,10 +465,11 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
   
   var body = t.evaluate().getContent();
   var subject = "Party Booking Confirmation";
-  var signature = getGmailSignature();
 
   // determine which account to send from
   var fromAddress = determineFromEmailAddress(location);
+
+  var signature = getGmailSignature(fromAddress);
   
   // Send the confirmation email
   GmailApp.sendEmail(emailAddress, subject, "", {from: fromAddress, htmlBody: body + signature, name : "Fizz Kidz", attachments : attachments});
@@ -704,8 +705,14 @@ function determineEndDate(dateOfParty, timeOfParty, partyLength) {
   return endDate;
 }
 
-function getGmailSignature() {
-  var draft = GmailApp.search("subject:signature label:draft", 0, 1);
+function getGmailSignature(fromAddress) {
+  var draft;
+  if (fromAddress == "info@fizzkidz.com.au") {
+    draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
+  }
+  else if (fromAddress = "malvern@fizzkidz.com.au") {
+    draft = GmailApp.search("subject:romy-signature label:draft", 0, 1);
+  }
   return draft[0].getMessages()[0].getBody();
 }
 

@@ -202,10 +202,10 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
 
   // finally, send a confirmation email
   // this is done inside this function, since we have already retrieved email address from the booking sheet
-  sendThankYouEmail(emailAddress, parentName, childrenCount, creations, additions, cakeRequired, selectedCake, cakeFlavour, partyType, questions);
+  sendThankYouEmail(emailAddress, parentName, childrenCount, creations, additions, cakeRequired, selectedCake, cakeFlavour, partyType, location, questions);
 }
 
-function sendThankYouEmail(emailAddress, parentName, childrenCount, creations, additions, cakeRequired, selectedCake, cakeFlavour, partyType, questions) {
+function sendThankYouEmail(emailAddress, parentName, childrenCount, creations, additions, cakeRequired, selectedCake, cakeFlavour, partyType, location, questions) {
   
   var t = HtmlService.createTemplateFromFile('form_completed_email_template');
   t.parentName = parentName;
@@ -220,10 +220,32 @@ function sendThankYouEmail(emailAddress, parentName, childrenCount, creations, a
   
   var body = t.evaluate().getContent();
   var subject = "Thank you";
-  var signature = getGmailSignature();
+
+  // determine from address
+  var fromAddress = determineFromEmailAddress(location);
+
+  var signature = getGmailSignature(fromAddress);
   
   // Send the confirmation email
-  GmailApp.sendEmail(emailAddress, subject, "", {htmlBody: body + signature, name : "Fizz Kidz"});
+  GmailApp.sendEmail(emailAddress, subject, "", {from: fromAddress, htmlBody: body + signature, name : "Fizz Kidz"});
+}
+
+function determineFromEmailAddress(location) {
+  /**
+   * If location is Malvern, send from malvern@fizzkidz.com.au
+   * If location is Balwyn, send from info@fizzkidz.com.au
+   * If location neither (mobile), send from info@fizzkidz.com.au
+   */
+
+   if (location == "Malvern") {
+     return GmailApp.getAliases()[0];
+   }
+   else if (location == "Balwyn") {
+     return Session.getActiveUser().getEmail();
+   }
+   else {
+     return Session.getActiveUser().getEmail();
+   }
 }
 
 function locateBooking(date, time, parentName, childName, childAge, partyType) {
@@ -276,7 +298,7 @@ function sendCakeNotification(date, time, parentName, childName, selectedCake, c
   GmailApp.sendEmail('info@fizzkidz.com.au', subject, "", {htmlBody: body, name : "Fizz Kidz"});
 }
 
-function sendQuestionsNotification(date, time, location, parentName, emailAddress, childName, questions) {
+function sendQuestionsNotification(date, time, parentName, emailAddress, childName, questions, location) {
   
   // Using the HTML email template, inject the variables and get the content
   var t = HtmlService.createTemplateFromFile('questions_email_template');
@@ -290,9 +312,10 @@ function sendQuestionsNotification(date, time, location, parentName, emailAddres
   
   var body = t.evaluate().getContent();
   var subject = "Questions asked in Party Form!";
+  var fromAddress = determineFromEmailAddress(location);
   
   // Send the confirmation email
-  GmailApp.sendEmail('info@fizzkidz.com.au', subject, "", {htmlBody: body, name : "Fizz Kidz"});
+  GmailApp.sendEmail(fromAddress, subject, "", {from: fromAddress, htmlBody: body, name : "Fizz Kidz"});
 }
 
 function getCorrectOutputFolder(dateFolder, partyType, location) {
@@ -330,7 +353,13 @@ function sendErrorEmail(parentName, childName, childAge, date, time, partyType) 
   GmailApp.sendEmail('info@fizzkidz.com.au', subject, "", {htmlBody: body, name : "Fizz Kidz"});
 }
 
-function getGmailSignature() {
-  var draft = GmailApp.search("subject:signature label:draft", 0, 1);
+function getGmailSignature(fromAddress) {
+  var draft;
+  if (fromAddress == "info@fizzkidz.com.au") {
+    draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
+  }
+  else if (fromAddress = "malvern@fizzkidz.com.au") {
+    draft = GmailApp.search("subject:romy-signature label:draft", 0, 1);
+  }
   return draft[0].getMessages()[0].getBody();
 }
