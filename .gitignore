@@ -4,3 +4,5 @@ FormToSheet/.clasp.json
 FormToSheet/appsscript.json
 SendUpcomingForms/.clasp.json
 SendUpcomingForms/appsscript.json
+pull_all_scripts.ps1
+push_all_scripts.ps1
