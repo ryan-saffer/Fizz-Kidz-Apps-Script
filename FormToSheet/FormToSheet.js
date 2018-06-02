@@ -110,20 +110,15 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
   }
   
   // search for existing folder of date, otherwise create a new one
-  var dateFolder = outputRootFolder.getFoldersByName(date);
-  var newFile = null;
-  if(!dateFolder.hasNext()) { // no folder exists yet for that date
+  var dateFolderIter = outputRootFolder.getFoldersByName(date);
+  var dateFolder;
+  if(!dateFolderIter.hasNext()) { // no folder exists yet for that date
     dateFolder = outputRootFolder.createFolder(date);
-    // when creating a date folder, also create each store and 'Mobile' folders within it
-    dateFolder.createFolder("Balwyn");
-    dateFolder.createFolder("Malvern");
-    dateFolder.createFolder("Mobile");
-    var outputFolder = getCorrectOutputFolder(dateFolder, partyType, location);
-    newFile = template.makeCopy(outputFolder);
   } else { // date folder exists
-    var outputFolder = getCorrectOutputFolder(dateFolder.next(), partyType, location);
-    newFile = template.makeCopy(outputFolder);
+    dateFolder = dateFolderIter.next();
   }
+  var outputFolder = getCorrectOutputFolder(dateFolder, partyType, location);
+  var newFile = template.makeCopy(outputFolder);
   newFile.setName(time + ": " + parentName + " / " + childName + " " + childAge + "th");
   var newFileID = newFile.getId();
   
@@ -299,14 +294,20 @@ function sendQuestionsNotification(date, time, parentName, emailAddress, childNa
 }
 
 function getCorrectOutputFolder(dateFolder, partyType, location) {
-  
-  var outputFolder;
+
   if (partyType == "In-store") {
-    outputFolder = dateFolder.getFoldersByName(location).next();
+    if (dateFolder.getFoldersByName(location).hasNext()) {
+      return dateFolder.getFoldersByName(location).next();
+    } else { // folder not yet created, create now
+      return dateFolder.createFolder(location);
+    }
   } else {
-    outputFolder = dateFolder.getFoldersByName("Mobile").next();
+    if (dateFolder.getFoldersByName("Mobile").hasNext()) {
+      return dateFolder.getFoldersByName("Mobile").next();
+    } else { // folder not yet created, create now
+      return dateFolder.createFolder("Mobile")
+    }
   }
-  return outputFolder;
 }
 
 function sendErrorEmail(parentName, childName, childAge, date, time, partyType) {
