@@ -194,8 +194,8 @@ function validateFields(parentName, mobileNumber, emailAddress, childName, child
     throw new Error("You must enter the email address. Operation cancelled.");
   }
   if (!validateEmail(emailAddress)) {
-    Browser.msgBox("⚠️You must enter the parents name. Party not booked/updated. Try again.");
-    throw new Error("You must enter the parents name. Operation cancelled.");
+    Browser.msgBox("⚠️Email address is not valid. Party not booked/updated. Try again.");
+    throw new Error("Email address is not valid. Operation cancelled.");
   }
   
   if(childName == "") {
