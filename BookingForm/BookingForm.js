@@ -117,12 +117,7 @@ function restoreValidation() {
     currentCell.setDataValidation(null);
   }
   
-  // then add the old validations back
-  currentCell = sheet.getRange('B5');
-  var helpText = "Childs age must be a number greater than 0";
-  var rule = SpreadsheetApp.newDataValidation().requireNumberGreaterThan(0).setAllowInvalid(false).setHelpText(helpText).build();
-  currentCell.setDataValidation(rule);
-  
+  // then add the old validations back  
   currentCell = sheet.getRange('B6');
   helpText = "Party must have a valid date. Double-click on cell to display a date picker.";
   rule = SpreadsheetApp.newDataValidation().requireDate().setAllowInvalid(false).setHelpText(helpText).build();
