@@ -435,24 +435,28 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
   t.startDate = Utilities.formatDate(startDate, 'Australia/Sydney', 'EEEE d MMMM y');
   t.startTime = Utilities.formatDate(startDate, 'Australia/Sydney', 'hh:mm a');
   t.endTime = Utilities.formatDate(endDate, 'Australia/Sydney', 'hh:mm a');
-  if (location == "Malvern") {
-    location = "our Malvern store";
+  var updated_location = location;
+  if (partyType == "In-store") {
+    updated_location = (location == "Malvern") ? "our Malvern store" : "our Balwyn store"
   }
-  else if (location == "Balwyn") {
-    location = "our Balwyn store";
-  }
-  t.location = location;
+  t.location = updated_location;
   t.creationCount = creationCount;
   
   // attach correct invitations
   var inStoreInvitations3pp = DriveApp.getFilesByName("Fizz Kidz Invitations - 3pp.pdf").next();
   var inStoreInvitationsLarge = DriveApp.getFilesByName("Fizz Kidz Invitations - Large.pdf").next();
+  var balwynInvitations = DriveApp.getFilesByName("Fizz Kidz Invitations - Balwyn.pdf").next();
   var mobilePartyInvitations = DriveApp.getFilesByName("Fizz Kidz Mobile Party Invitations.jpg").next();
   
   var attachments = [];
   if (partyType == "In-store") {
-    attachments.push(inStoreInvitations3pp);
-    attachments.push(inStoreInvitationsLarge);
+    if (location == "Malvern") {
+      attachments.push(inStoreInvitations3pp);
+      attachments.push(inStoreInvitationsLarge);
+    }
+    else if (location == "Balwyn") {
+      attachments.push(balwynInvitations);
+    }
   } else {
     attachments.push(mobilePartyInvitations);
   }
