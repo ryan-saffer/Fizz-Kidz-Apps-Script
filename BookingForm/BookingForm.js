@@ -145,6 +145,7 @@ function restoreValidation() {
   currentCell.setDataValidation(rule);
 
   if (partyType == "In-store") {
+    currentCell = sheet.getRange('B11');
     helpText = "An In-store location cannot be changed. To move the booking to a different store, delete this booking and create a new one";
     rule = SpreadsheetApp.newDataValidation().requireTextEqualTo(currentCell.getDisplayValue()).setAllowInvalid(false).setHelpText(helpText).build();
     currentCell.setDataValidation(rule);
