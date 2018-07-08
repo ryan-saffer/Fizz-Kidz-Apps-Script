@@ -1,8 +1,8 @@
 function main() {
   
   var dateToday = new Date();
-  var nextWeekendStartDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 6);
-  var nextWeekendEndDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 9);
+  var nextWeekendStartDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 8);
+  var nextWeekendEndDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 11);
   
   var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
   var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
