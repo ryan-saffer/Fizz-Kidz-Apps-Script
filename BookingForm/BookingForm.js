@@ -671,4 +671,25 @@ function resetSheet() {
   sheet.getRange('B10').setValue('In-store');
   validateLocationCell(sheet.getRange('B11'));
   sheet.getRange('B12').setValue('YES');
+  
+  // reset the formatting of the cells
+  range = sheet.getRange('B1:B9');
+  range.setFontFamily("Arial");
+  range.setFontSize(14);
+  range.setFontColor("black");
+  range.setHorizontalAlignment("right");
+  range.setBorder(true, true, true, true, true, true);
+  
+  range = sheet.getRange('B10:B12');
+  range.setFontFamily("Arial");
+  range.setFontSize(14);
+  range.setFontColor("black");
+  range.setHorizontalAlignment("center");
+  range.setBorder(true, true, true, true, true, true);
+  
+  range = sheet.getRange('B6');
+  range.setNumberFormat("d mmmm yyy");
+  
+  range = sheet.getRange('B7');
+  range.setNumberFormat("h:mm am/pm");
 }
