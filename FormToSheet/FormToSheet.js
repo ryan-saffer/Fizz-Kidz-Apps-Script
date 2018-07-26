@@ -62,7 +62,7 @@ function onSubmit(e) {
     
     // if booking a cake, email Talia
     if (cakeRequired == "Yes please!") {
-      sendCakeNotification(formattedDate, formattedTime, parentName, childName, selectedCake, cakeFlavour);
+      sendCakeNotification(formattedDate, formattedTime, parentName, childName, selectedCake, cakeFlavour, partyType);
     }
     
     createPartySheet(formattedDate, formattedTime, parentName, childName, childAge, partyType, childrenCount, creations, additions, cakeRequired, selectedCake, cakeFlavour, extraInfo, questions);
@@ -106,7 +106,7 @@ function createPartySheet(date, time, parentName, childName, childAge, partyType
   
   // since we now have these details (such as email), send a notification email if there are any questions
   if (questions != "") {
-    sendQuestionsNotification(date, time, parentName, emailAddress, childName, questions);
+    sendQuestionsNotification(date, time, location, parentName, emailAddress, childName, questions);
   }
   
   // search for existing folder of date, otherwise create a new one
@@ -257,7 +257,7 @@ function lockDownSheet(sheet, newFile) {
   sheet.getRange('B13').setValue(newFile.getUrl()).setFontSize(15);
 }
 
-function sendCakeNotification(date, time, parentName, childName, selectedCake, cakeFlavour) {
+function sendCakeNotification(date, time, parentName, childName, selectedCake, cakeFlavour, partyType) {
   
   // Using the HTML email template, inject the variables and get the content
   var t = HtmlService.createTemplateFromFile('cake_ordered_email_template');
@@ -267,6 +267,7 @@ function sendCakeNotification(date, time, parentName, childName, selectedCake, c
   t.timeOfParty = time;
   t.selectedCake = selectedCake;
   t.cakeFlavour = cakeFlavour;
+  t.partyType = partyType;
   
   var body = t.evaluate().getContent();
   var subject = "Cake Order!";
@@ -275,7 +276,7 @@ function sendCakeNotification(date, time, parentName, childName, selectedCake, c
   GmailApp.sendEmail('info@fizzkidz.com.au', subject, "", {htmlBody: body, name : "Fizz Kidz"});
 }
 
-function sendQuestionsNotification(date, time, parentName, emailAddress, childName, questions) {
+function sendQuestionsNotification(date, time, location, parentName, emailAddress, childName, questions) {
   
   // Using the HTML email template, inject the variables and get the content
   var t = HtmlService.createTemplateFromFile('questions_email_template');
@@ -283,6 +284,7 @@ function sendQuestionsNotification(date, time, parentName, emailAddress, childNa
   t.childName = childName;
   t.dateOfParty = date;
   t.timeOfParty = time;
+  t.location = location;
   t.questions = questions;
   t.emailAddress = emailAddress;
   

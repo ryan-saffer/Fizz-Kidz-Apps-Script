@@ -440,6 +440,7 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
   if (partyType == "In-store") {
     updated_location = (location == "Malvern") ? "our Malvern store" : "our Balwyn store"
   }
+  t.partyType = partyType;
   t.location = updated_location;
   t.creationCount = creationCount;
   
