@@ -478,9 +478,8 @@ function sendConfirmationEmail(parentName, emailAddress, childName, childAge, da
 function determineFromEmailAddress(location) {
   /*
    * Returns the email address that the email should be sent from.
-   * If Talia logged in and booking in Malvern, return alias
-   * If Romy logged in and booking in Balwyn, return alias
-   * Otherwise just return their current email
+   * If Malvern, send from "malvern@fizzkidz.com.au"
+   * If Balwyn or Mobile, send from "info@fizzkidz.com.au"
    */
 
   var currentEmail = Session.getActiveUser().getEmail();
@@ -488,31 +487,16 @@ function determineFromEmailAddress(location) {
   if(location == "Malvern") {
     // send from malvern@fizzkidz.com.au
     
-    if(currentEmail == "malvern@fizzkidz.com.au") {
-      return currentEmail;
-    }
-    else {
-      return GmailApp.getAliases()[0];
-    }
+    return "malvern@fizzkidz.com.au";
   }
   else if(location == "Balwyn") {
     // send from info@fizzkidz.com.au
 
-    if (currentEmail == "info@fizzkidz.com.au") {
-      return currentEmail;
-    }
-    else {
-      return GmailApp.getAliases()[0];
-    }
+    return "info@fizzkidz.com.au";
   }
   else { // mobile party
     // send from info@fizzkidz.com.au
-    if(currentEmail == "info@fizzkidz.com.au") {
-      return currentEmail;
-    }
-    else {
-      return GmailApp.getAliases()[0];
-    }
+    return "info@fizzkidz.com.au";
   }
 }
 

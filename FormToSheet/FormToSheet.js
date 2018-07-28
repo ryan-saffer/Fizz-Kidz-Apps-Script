@@ -238,13 +238,13 @@ function determineFromEmailAddress(location) {
    */
 
    if (location == "Malvern") {
-     return GmailApp.getAliases()[0];
+     return "malvern@fizzkidz.com.au";
    }
    else if (location == "Balwyn") {
-     return Session.getActiveUser().getEmail();
+     return "info@fizzkidz.com.au"
    }
    else {
-     return Session.getActiveUser().getEmail();
+     return "info@fizzkidz.com.au";
    }
 }
 
