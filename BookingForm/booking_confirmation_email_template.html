@@ -15,6 +15,14 @@
         <p>Feel free to have a look at our website <a href="http://www.fizzkidz.com.au/">www.fizzkidz.com.au</a> for more information regarding our birthday parties and like our Facebook page to check out more pictures of our creations! -<a href="https://www.facebook.com/fizzkidz/">https://www.facebook.com/fizzkidz/</a></p>
         <p>We have attached our printable party invitations :)</p>
         <p>Kind regards,</p>
-        <p>Talia and the Fizz Kidz team <img src="https://mail.google.com/mail/e/1f31f" alt="🌟" data-goomoji="1f31f" /></p>
+        <? if (partyType == "In-store") {
+            if (location == "our Malvern store") { ?>
+                <p>Romy and the Fizz Kidz team <img src="https://mail.google.com/mail/e/1f31f" alt="🌟" data-goomoji="1f31f" /></p>
+            <? } else { ?>
+                <p>Talia and the Fizz Kidz team <img src="https://mail.google.com/mail/e/1f31f" alt="🌟" data-goomoji="1f31f" /></p>
+            <? }
+        } else { ?>
+            <p>Talia and the Fizz Kidz team <img src="https://mail.google.com/mail/e/1f31f" alt="🌟" data-goomoji="1f31f" /></p>
+        <? } ?>
     </body>
 </html>

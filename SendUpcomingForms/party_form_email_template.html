@@ -9,7 +9,11 @@
     <p>To make sure everything is organised for the special event, can you please fill in the form below :)</p>
     <p><a href="<?= preFilledURL ?>">Fizz Kidz Party Form (click on me!)<img src="https://mail.google.com/mail/e/1f31f" alt="🌟" data-goomoji="1f31f" /></a></p>
     <p>Kind regards,</p>
-    <p>Talia and the Fizz Kidz team</p>
+    <? if (location == "our Malvern store") { ?>
+      <p>Romy and the Fizz Kidz team</p>
+    <? } else { ?>
+      <p>Talia and the Fizz Kidz team</p>
+    <? } ?>
   </body>
 </html>
 

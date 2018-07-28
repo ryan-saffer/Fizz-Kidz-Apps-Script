@@ -217,6 +217,7 @@ function sendThankYouEmail(emailAddress, parentName, childrenCount, creations, a
   t.cakeFlavour = cakeFlavour;
   t.partyType = partyType;
   t.questions = questions;
+  t.location = location;
   
   var body = t.evaluate().getContent();
   var subject = "Thank you";
@@ -293,12 +294,13 @@ function sendCakeNotification(date, time, parentName, childName, selectedCake, c
   
   var body = t.evaluate().getContent();
   var subject = "Cake Order!";
+  var fromAddress = determineFromEmailAddress(partyType);
   
   // Send the confirmation email
-  GmailApp.sendEmail('info@fizzkidz.com.au', subject, "", {htmlBody: body, name : "Fizz Kidz"});
+  GmailApp.sendEmail(fromAddress, subject, "", {from: fromAddress, htmlBody: body, name : "Fizz Kidz"});
 }
 
-function sendQuestionsNotification(date, time, parentName, emailAddress, childName, questions, location) {
+function sendQuestionsNotification(date, time, location, parentName, emailAddress, childName, questions) {
   
   // Using the HTML email template, inject the variables and get the content
   var t = HtmlService.createTemplateFromFile('questions_email_template');
