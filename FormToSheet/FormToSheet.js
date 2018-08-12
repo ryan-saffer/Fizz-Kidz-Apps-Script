@@ -62,7 +62,7 @@ function onSubmit(e) {
     
     // if booking a cake, email Talia
     if (cakeRequired == "Yes please!") {
-      sendCakeNotification(formattedDate, formattedTime, parentName, childName, selectedCake, cakeFlavour, partyType);
+      sendCakeNotification(formattedDate, formattedTime, parentName, childName, childAge, selectedCake, cakeFlavour, partyType);
     }
     
     createPartySheet(formattedDate, formattedTime, parentName, childName, childAge, partyType, childrenCount, creations, additions, cakeRequired, selectedCake, cakeFlavour, extraInfo, questions);
@@ -280,12 +280,13 @@ function lockDownSheet(sheet, newFile) {
   sheet.getRange('B13').setValue(newFile.getUrl()).setFontSize(15);
 }
 
-function sendCakeNotification(date, time, parentName, childName, selectedCake, cakeFlavour, partyType) {
+function sendCakeNotification(date, time, parentName, childName, childAge, selectedCake, cakeFlavour, partyType) {
   
   // Using the HTML email template, inject the variables and get the content
   var t = HtmlService.createTemplateFromFile('cake_ordered_email_template');
   t.parentName = parentName;
   t.childName = childName;
+  t.childAge = childAge;
   t.dateOfParty = date;
   t.timeOfParty = time;
   t.selectedCake = selectedCake;
