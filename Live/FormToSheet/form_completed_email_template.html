@@ -1,19 +1,49 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <style>
+      table {
+        font-family: 'Trebuchet MS';
+        width: 600px;
+      }
+      td, th {
+        font-family: 'Trebuchet MS';
+        font-size: 12px;
+        text-align: left;
+        padding: 6px;
+      }
+    </style>
     <base target="_top">
   </head>
   <body style ="font-family:'trebuchet ms'">
   Hi <?= parentName ?>,
   <p>Thank you for filling out the party details form. Below is a summary of what you have ordered:</p>
-  <p><b>&emsp;Number of children attending:</b> <i><?= childrenCount ?></i></p>
-  <p><b>&emsp;Chosen Creations:</b> <i><?= creations ?></i></p>
-  <? if (additions != "") { ?>
-  <p><b>&emsp;Additions:</b> <i><?= additions ?></i></p>
+  <table>
+    <colgroup>
+      <col span="1", style="width: 25%;">
+      <col span="1", style="width: 75%;">
+    </colgroup>
+    <tr>
+      <th>Number attending:</th>
+      <td><?= childrenCount ?></td>
+    </tr>
+    <tr>
+      <th>Chosen Creations:</th>
+      <td><?= creations ?></td>
+    </tr>
+  <? if (additions != '') { ?>
+    <tr>
+      <th>Additions:</th>
+      <td><?= additions ?></td>
+    </tr>
   <? } ?>
   <? if (cakeRequired == "Yes please!") { ?>
-  <p><b>&emsp;Chosen Cake:</b> <i><?= cakeFlavour ?> <?= selectedCake ?></i></p>
+    <tr>
+      <th>Chosen Cake:</th>
+      <td><?= cakeFlavour ?> <?= selectedCake ?></td>
+    </tr>
   <? } ?>
+  </table>
   <p>If anything here is incorrect, or anything changes, please let us know.</p>
   <? if (questions != "") { ?>
   <p>We can see that you have asked some questions in the form. We will be in touch very soon to answer those questions for you :)</p>
@@ -35,5 +65,3 @@
   <? } ?>
   </body>
 </html>
-
-

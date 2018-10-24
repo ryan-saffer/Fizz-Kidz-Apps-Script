@@ -1,3 +1,73 @@
+var additions_list = [
+  "Fairy Bread",
+  "Frankfurts",
+  "Fruit Platter",
+  "Bowl of Freshly Cut Watermelon",
+  "Vegetarian Spring Rolls",
+  "Wedges",
+  "Vegemite Sandwiches",
+  "Cheese & Tomato Sandwiches",
+  "Combo Sandwich Platter",
+  "Lolly Bags"  
+]
+
+var additions_prices =
+{
+  "Fairy Bread":{
+     "One Serving":"$25",
+     "Two Servings":"$40"
+  },
+  "Frankfurts":{
+     "One Serving":"$20",
+     "Two Servings":"$30"
+  },
+  "Fruit Platter":{
+     "One Serving":"$40",
+     "Two Servings":"$65"
+  },
+  "Bowl of Freshly Cut Watermelon":{
+     "One Serving":"$20",
+     "Two Servings":"$30"
+  },
+  "Vegetarian Spring Rolls":{
+     "One Serving":"$20",
+     "Two Servings":"$35"
+  },
+  "Wedges":{
+     "One Serving":"$25",
+     "Two Servings":"$40"
+  },
+  "Vegemite Sandwiches":{
+     "One Serving":"$25",
+     "Two Servings":"$40"
+  },
+  "Cheese & Tomato Sandwiches":{
+     "One Serving":"$30",
+     "Two Servings":"$50"
+  },
+  "Combo Sandwich Platter":{
+    "One Serving":"$30",
+    "Two Servings":"$50"
+  },
+  "Lolly Bags":{
+     "One Serving":"$2.50 each",
+     "Two Servings":"$2.50 each"
+  }
+}
+
+function mergeCreations(string1, string2) {
+  if (string2 != '') {
+    if (string1 == '') {
+      return string2;
+    } else {
+      string1 = string1 + ", " + string2;
+      return string1;
+    }
+  } else {
+    return string1;
+  }
+}
+
 function onSubmit(e) {
   
   console.log(e.values);
@@ -5,9 +75,9 @@ function onSubmit(e) {
 
   /**
    * Party type determined by number of questions
-   * 14 questions in the In-store form, 9 in the Mobile form
+   * 25 questions in the In-store form, 11 in the Mobile form
    */
-  var partyType = (e.values.length == 14) ? e.values[5] : "Mobile";
+  var partyType = (e.values.length == 25) ? e.values[5] : "Mobile";
   console.log("Party type: " + partyType);
   
   var dateTime = e.values[1].split(" ");
@@ -39,25 +109,36 @@ function onSubmit(e) {
     var childrenCount = e.values[6];
     console.log("Children Count: " + childrenCount);
   
-    var creations = e.values[7];
+    var creations = mergeCreations(e.values[7], e.values[8]);
     console.log("Creations " + creations);
 
-    var additions = e.values[8];
+    var additions = '';
+    for (var i = 0; i < additions_list.length; i++) { // each food option is own question
+      var selected_serving = e.values[i+9];
+      if (selected_serving != '') { // check if option had serving selected
+        if (additions != '') { // for the case of the first item
+          additions += ',\n';
+        }
+        var addition = additions_list[i];
+        var price = additions_prices[addition][selected_serving];
+        additions = additions + addition + " (" + selected_serving + ") - " + price;
+      }
+    }
     console.log("Additions: " + additions);
   
-    var cakeRequired = e.values[9];
+    var cakeRequired = e.values[19];
     console.log("Cake required: " + cakeRequired);
     
-    var selectedCake = e.values[10];
+    var selectedCake = e.values[20];
     console.log("Selected Cake: " + selectedCake);
     
-    var cakeFlavour = e.values[11];
+    var cakeFlavour = e.values[21];
     console.log("Cake Falvour: " + cakeFlavour);
     
-    var extraInfo = e.values[12];
+    var extraInfo = e.values[22];
     console.log("Extra Info: " + extraInfo);
     
-    var questions = e.values[13];
+    var questions = e.values[23];
     console.log("Questions: " + questions);
     
     // if booking a cake, email Talia
@@ -69,15 +150,17 @@ function onSubmit(e) {
   
   } else {
     var childrenCount = e.values[5];
+    // since mobile only takes a number, add 'children
+    childrenCount += " children"
     console.log("Children Count: " + childrenCount);
   
-    var creations = e.values[6];
+    var creations = mergeCreations(e.values[6], e.values[7]);
     console.log("Creations " + creations);
 
-    var extraInfo = e.values[7];
+    var extraInfo = e.values[8];
     console.log("Extra Info: " + extraInfo);
   
-    var questions = e.values[8];
+    var questions = e.values[9];
     console.log("Questions: " + questions);
     
     createPartySheet(formattedDate, formattedTime, parentName, childName, childAge, partyType, childrenCount, creations, "", "", "", "", extraInfo, questions);
