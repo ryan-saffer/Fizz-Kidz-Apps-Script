@@ -7,8 +7,7 @@ var additions_list = [
   "Wedges",
   "Vegemite Sandwiches",
   "Cheese & Tomato Sandwiches",
-  "Combo Sandwich Platter",
-  "Lolly Bags"  
+  "Combo Sandwich Platter"
 ]
 
 var additions_prices =
@@ -48,10 +47,6 @@ var additions_prices =
   "Combo Sandwich Platter":{
     "One Serving":"$30",
     "Two Servings":"$50"
-  },
-  "Lolly Bags":{
-     "One Serving":"$2.50 each",
-     "Two Servings":"$2.50 each"
   }
 }
 
@@ -123,6 +118,13 @@ function onSubmit(e) {
         var price = additions_prices[addition][selected_serving];
         additions = additions + addition + " (" + selected_serving + ") - " + price;
       }
+    }
+    // add lolly bags question
+    if (e.values[18] == "Yes") {
+      if (additions != '') {
+        additions += ',\n';
+      }
+      additions = additions + "Lolly Bags - $2.50 each"
     }
     console.log("Additions: " + additions);
   
