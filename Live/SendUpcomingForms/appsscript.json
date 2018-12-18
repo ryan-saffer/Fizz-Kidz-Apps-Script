@@ -2,6 +2,10 @@
   "timeZone": "Australia/Sydney",
   "dependencies": {
     "enabledAdvancedServices": [{
+      "userSymbol": "Drive",
+      "serviceId": "drive",
+      "version": "v2"
+    }, {
       "userSymbol": "Calendar",
       "serviceId": "calendar",
       "version": "v3"

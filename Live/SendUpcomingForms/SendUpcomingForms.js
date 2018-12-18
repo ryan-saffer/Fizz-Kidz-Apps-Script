@@ -1,3 +1,9 @@
+/**
+ * triggered weekly Thursday 9:34am
+ * email parents with parties on following Friday+
+ * update 'This Weekends Parties' folder in Drive
+ */
+
 function main() {
   
   var dateToday = new Date();
@@ -38,6 +44,9 @@ function main() {
   
   // while we are here, lets also move the current weekends party sheets into the malvern stores folder
   shareCurrentWeekend();
+  
+  // generate a report of additional food and send off to managers
+  generateReport();
 }
 
 function sendPartyForm(bookingSheetID) {
@@ -72,6 +81,7 @@ function sendPartyForm(bookingSheetID) {
   t.startDate = Utilities.formatDate(startDate, 'Australia/Sydney', 'EEEE d MMMM y');
   t.startTime = Utilities.formatDate(startDate, 'Australia/Sydney', 'hh:mm a');
   t.endTime = Utilities.formatDate(endDate, 'Australia/Sydney', 'hh:mm a');
+  
   // determine location
   var updated_location = location;
   if (partyType == "In-store") {
@@ -221,6 +231,111 @@ function shareCurrentWeekend() {
       outputFolder.addFolder(currentFolder);
     }
   }
+}
+
+function generateReport() {
+
+  // 1. open form responses spreadsheet
+  // 2. find range of rows within upcoming weekend
+  // 3. search each row for additions
+
+  var RESPONSES_FILE_ID = '1C2QOmdKoODDO0MOopJeSehTdeUvZxL4F9kDafCCfNgM'
+
+  var responsesFile = SpreadsheetApp.openById(RESPONSES_FILE_ID),
+      responsesSheet = responsesFile.getSheetByName("In-Store Responses"),
+      malvernOrders = [0,0,0,0,0,0,0,0,0,0],
+      balwynOrders = [0,0,0,0,0,0,0,0,0,0],
+      dateToday = new Date(),
+      dateFriday = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 1),
+      dateSunday = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 3),
+      dateMonday = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() + 4),
+      startRow = 2,
+      endRow = responsesSheet.getLastRow()
+  
+  for (var row = startRow; row <= endRow; row++) {
+    var dateOfParty = responsesSheet.getRange('B'+row).getValue()
+
+    if (dateFriday < dateOfParty && dateOfParty < dateMonday) {
+      var location = responsesSheet.getRange('F'+row).getDisplayValue()
+      var additionsRange = responsesSheet.getRange('J'+row+':R'+row)
+      for (var col = 1; col <= 9; col++) {
+        var val = additionsRange.getCell(1, col).getDisplayValue()
+        if (location == "Malvern") {
+          if (val == "One Serving") {
+            malvernOrders[col-1] += 1
+          }
+          else if (val == "Two Servings") {
+            malvernOrders[col-1] += 2
+          }
+        } else if (location == "Balwyn") {
+          if (val == "One Serving") {
+            balwynOrders[col-1] += 1
+          }
+          else if (val == "Two Servings") {
+            balwynOrders[col-1] += 2
+          }
+        }
+      }
+      // also keep running total of lolly bags
+      var lollyBagsVal = responsesSheet.getRange('S'+row).getDisplayValue()
+      if (lollyBagsVal == "Yes") {
+        var childrenCount = responsesSheet.getRange('G'+row).getDisplayValue()
+        childrenCount = childrenCount.substring(5, 7)
+        console.log("COUNT: " + childrenCount)
+        if (location == "Malvern") {
+          malvernOrders[9] += parseInt(childrenCount)
+        }
+        else if (location == "Balwyn") {
+          balwynOrders[9] += parseInt(childrenCount)
+        }
+      }
+    }
+  }
+
+  var reportTemplate = DriveApp.getFileById('1Syupwyg_tXjmTw4yN7Sysig_K3GJRwkM1IQwrBhnbZw')
+  var report = reportTemplate.makeCopy()
+  var newDoc = DocumentApp.openById(report.getId())
+  var body = newDoc.getBody()
+
+  var fridayFormatted = Utilities.formatDate(dateFriday, 'Australia/Sydney', 'd/MM/yy')
+  var sundayFormatted = Utilities.formatDate(dateSunday, 'Australia/Sydney', 'd/MM/yy')
+
+  body.replaceText('%DATERANGE%', fridayFormatted + ' - ' + sundayFormatted)
+  body.replaceText('%MALV_FAIRYBREAD%',malvernOrders[0])
+  body.replaceText('%MALV_FRANKFURTS%', malvernOrders[1])
+  body.replaceText('%MALV_FRUITPLATTER%', malvernOrders[2])
+  body.replaceText('%MALV_WATERMELON%', malvernOrders[3])
+  body.replaceText('%MALV_SPRINGROLLS%', malvernOrders[4])
+  body.replaceText('%MALV_WEDGES%', malvernOrders[5])
+  body.replaceText('%MALV_VEGSAND%', malvernOrders[6])
+  body.replaceText('%MALV_CHEESETOMSAND%', malvernOrders[7])
+  body.replaceText('%MALV_COMBOSAND%', malvernOrders[8])
+  body.replaceText('%MALV_LOLLYBAGS%', malvernOrders[9])
+  body.replaceText('%BALWYN_FAIRYBREAD%',balwynOrders[0])
+  body.replaceText('%BALWYN_FRANKFURTS%', balwynOrders[1])
+  body.replaceText('%BALWYN_FRUITPLATTER%', balwynOrders[2])
+  body.replaceText('%BALWYN_WATERMELON%', balwynOrders[3])
+  body.replaceText('%BALWYN_SPRINGROLLS%', balwynOrders[4])
+  body.replaceText('%BALWYN_WEDGES%', balwynOrders[5])
+  body.replaceText('%BALWYN_VEGSAND%', balwynOrders[6])
+  body.replaceText('%BALWYN_CHEESETOMSAND%', balwynOrders[7])
+  body.replaceText('%BALWYN_COMBOSAND%', balwynOrders[8])
+  body.replaceText('%BALWYN_LOLLYBAGS%', balwynOrders[9])
+
+  newDoc.saveAndClose()
+
+  var docblob = newDoc.getAs('application/pdf')
+  var newFile = DriveApp.createFile(docblob)
+
+  // email the reports
+  var subject = "Additional Food Weekly Report"
+  var attachments = [newFile]
+  GmailApp.sendEmail('info@fizzkidz.com.au, malvern@fizzkidz.com.au', subject, "", {attachments: attachments})
+
+  // delete the files
+  DriveApp.removeFile(newFile)
+  Drive.Files.remove(report.getId())
+
 }
 
 function getGmailSignature(fromAddress) {
