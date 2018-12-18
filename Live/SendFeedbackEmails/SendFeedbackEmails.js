@@ -44,20 +44,49 @@ function sendFeedbackEmail(bookingSheetID) {
   var parentName = sheet.getRange('B1').getDisplayValue();
   var emailAddress = sheet.getRange('B3').getDisplayValue();
   var childName = sheet.getRange('B4').getDisplayValue();
+  var partyType = sheet.getRange('B10').getDisplayValue();
+  var location = sheet.getRange('B11').getDisplayValue();
 
   var t = HtmlService.createTemplateFromFile('feedback_email_template');
   t.parentName = parentName;
   t.childName = childName;
+  t.partyType = partyType;
+  t.location = location;
 
   var body = t.evaluate().getContent();
   var subject = "We hope you enjoyed your party!";
-  var signature = getGmailSignature();
+  var fromAddress = determineFromEmailAddress(location);
+  var signature = getGmailSignature(fromAddress);
   
   // Send the confirmation email
-  GmailApp.sendEmail(emailAddress, subject, "", {htmlBody : body + signature, name : "Fizz Kidz"});
+  GmailApp.sendEmail(emailAddress, subject, "", {from: fromAddress, htmlBody : body + signature, name : "Fizz Kidz"});
 }
 
-function getGmailSignature() {
-  var draft = GmailApp.search("subject:signature label:draft", 0, 1);
+function determineFromEmailAddress(location) {
+  /*
+   * Returns the email address that the email should be sent from.
+   * If Malvern, send from "malvern@fizzkidz.com.au"
+   * If Balwyn or Mobile, send from "info@fizzkidz.com.au"
+   */
+
+  if(location == "Malvern") {
+    return "malvern@fizzkidz.com.au";
+  }
+  else if(location == "Balwyn") {
+    return "info@fizzkidz.com.au";
+  }
+  else { // mobile party
+    return "info@fizzkidz.com.au";
+  }
+}
+
+function getGmailSignature(fromAddress) {
+  var draft;
+  if (fromAddress == "info@fizzkidz.com.au") {
+    draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
+  }
+  else if (fromAddress = "malvern@fizzkidz.com.au") {
+    draft = GmailApp.search("subject:romy-signature label:draft", 0, 1);
+  }
   return draft[0].getMessages()[0].getBody();
 }
