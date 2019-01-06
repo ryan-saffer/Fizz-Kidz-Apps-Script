@@ -179,7 +179,7 @@ function NewBooking(sheet) {
         t.parentName = this.parentName;
         t.childName = this.childName;
         t.childAge = this.childAge;
-        t.startDate = Utilities.formatDate(startDate, 'Australia/Sydney', 'EEEE d MMMM y');
+        t.startDate = buildFormattedStartDate(startDate)
         t.startTime = Utilities.formatDate(startDate, 'Australia/Sydney', 'hh:mm a');
         t.endTime = Utilities.formatDate(endDate, 'Australia/Sydney', 'hh:mm a');
         var updated_location = this.location;
