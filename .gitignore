@@ -2,3 +2,4 @@ pull_all_scripts.ps1
 push_all_scripts.ps1
 push-all-scripts.sh
 pull-all-scripts.sh
+/dev/*
