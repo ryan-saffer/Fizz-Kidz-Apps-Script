@@ -1,15 +1,25 @@
 function main() {
 
   var dateToday = new Date();
-  var pastWeekendStartDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate() - 3);
-  var pastWeekendEndDate = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate());
+  var pastWeekendStartDate  = new Date(
+                                    dateToday.getFullYear(),
+                                    dateToday.getMonth(),
+                                    dateToday.getDate() - 3
+                                  )
+  var pastWeekendEndDate    = new Date(
+                                    dateToday.getFullYear(),
+                                    dateToday.getMonth(),
+                                    dateToday.getDate()
+                                  )
   
   var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
   var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
   var travelPartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
   
-  var options = {timeMin : pastWeekendStartDate.toISOString(),
-                 timeMax : pastWeekendEndDate.toISOString()};
+  var options = {
+    timeMin: pastWeekendStartDate.toISOString(),
+    timeMax: pastWeekendEndDate.toISOString()
+  }
 
   // malvern store parties
   var response = Calendar.Events.list(malvernStorePartiesCalendarID, options);
