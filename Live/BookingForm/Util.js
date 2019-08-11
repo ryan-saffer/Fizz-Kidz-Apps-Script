@@ -32,13 +32,7 @@ function determineFromEmailAddress(location) {
  */
 function getGmailSignature(fromAddress) {
   
-  var draft;
-  if (fromAddress == "info@fizzkidz.com.au") {
-    draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
-  }
-  else if (fromAddress = "malvern@fizzkidz.com.au") {
-    draft = GmailApp.search("subject:romy-signature label:draft", 0, 1);
-  }
+  var draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
   return draft[0].getMessages()[0].getBody();
 }
 
