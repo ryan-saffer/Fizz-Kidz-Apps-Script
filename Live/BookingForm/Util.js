@@ -27,10 +27,9 @@ function determineFromEmailAddress(location) {
 /**
  * Gets the correct managers signature depending on who email is being sent from
  * 
- * @param {String} fromAddress the email address sending the email
  * @returns {String} the signature
  */
-function getGmailSignature(fromAddress) {
+function getGmailSignature() {
   
   var draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
   return draft[0].getMessages()[0].getBody();

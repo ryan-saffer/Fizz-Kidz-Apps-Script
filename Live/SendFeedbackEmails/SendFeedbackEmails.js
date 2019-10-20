@@ -66,7 +66,7 @@ function sendFeedbackEmail(bookingSheetID) {
   var body = t.evaluate().getContent();
   var subject = "We hope you enjoyed your party!";
   var fromAddress = determineFromEmailAddress(location);
-  var signature = getGmailSignature(fromAddress);
+  var signature = getGmailSignature();
   
   // Send the confirmation email
   GmailApp.sendEmail(emailAddress, subject, "", {from: fromAddress, htmlBody : body + signature, name : "Fizz Kidz"});
@@ -90,13 +90,7 @@ function determineFromEmailAddress(location) {
   }
 }
 
-function getGmailSignature(fromAddress) {
-  var draft;
-  if (fromAddress == "info@fizzkidz.com.au") {
-    draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
-  }
-  else if (fromAddress = "malvern@fizzkidz.com.au") {
-    draft = GmailApp.search("subject:romy-signature label:draft", 0, 1);
-  }
+function getGmailSignature() {
+  var draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
   return draft[0].getMessages()[0].getBody();
 }

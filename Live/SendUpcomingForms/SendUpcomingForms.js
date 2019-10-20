@@ -8,22 +8,24 @@ function main() {
   
   var dateToday = new Date();
   var nextWeekendStartDate  = new Date(
-                                    dateToday.getFullYear(),
-                                    dateToday.getMonth(),
-                                    dateToday.getDate() + 8
-                                  )
+    dateToday.getFullYear(),
+    dateToday.getMonth(),
+    dateToday.getDate() + 8
+  )
   var nextWeekendEndDate    = new Date(
-                                    dateToday.getFullYear(),
-                                    dateToday.getMonth(),
-                                    dateToday.getDate() + 11
-                                  )
+    dateToday.getFullYear(),
+    dateToday.getMonth(),
+    dateToday.getDate() + 11
+  )
   
   var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
   var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
   var travelPartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
   
-  var options = {timeMin : nextWeekendStartDate.toISOString(),
-                 timeMax : nextWeekendEndDate.toISOString()};
+  var options = {
+    timeMin : nextWeekendStartDate.toISOString(),
+    timeMax : nextWeekendEndDate.toISOString()
+  };
   
   // malvern store parties
   var response = Calendar.Events.list(malvernStorePartiesCalendarID, options);
@@ -156,8 +158,8 @@ function determineEndDate(dateOfParty, timeOfParty, partyLength) {
 function getPreFilledFormURL(emailAddress, dateOfParty, parentName, mobileNumber, childName, childAge, partyLength, partyType, location, bookingSheetID) {
 
   // form IDs
-  var inStoreFormID = "1LH52NazS74FuIv1bisZ1kMQuEeC8l5RRT-5f7TzK1n4";
-  var travelFormID = "14vQcTDdZSOniRaoOPdy-rnp8kyckWj44WjEbEnB3CE0";
+  var inStoreFormID = "1gL6_H4xgpOz_J616DN4HvKMWHfkf6Bdvrbl4-fJtiV0";
+  var travelFormID = "17NNqsqsq3EBLGsMOl93neeWXXkcbF4SiJIj-gXDiknM";
   
   // open the correct form, create a response and get the items
   var formID = (partyType == "In-store") ? inStoreFormID : travelFormID;
@@ -201,7 +203,7 @@ function getPreFilledFormURL(emailAddress, dateOfParty, parentName, mobileNumber
 
   // fifth question - location - only if in-store
   if (partyType == "In-store") {
-    var locationItem = formItems[5].asMultipleChoiceItem();
+    var locationItem = formItems[5].asListItem();
     response = locationItem.createResponse(location);
     formResponse.withItemResponse(response);
   }

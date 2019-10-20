@@ -190,34 +190,15 @@ function NewBooking(sheet) {
         t.location = updated_location;
         t.creationCount = creationCount;
         
-        // attach correct invitations
-        var inStoreInvitations3pp = DriveApp.getFilesByName("Fizz Kidz Invitations - 3pp.pdf").next();
-        var inStoreInvitationsLarge = DriveApp.getFilesByName("Fizz Kidz Invitations - Large.pdf").next();
-        var balwynInvitations = DriveApp.getFilesByName("Fizz Kidz Invitations - Balwyn.pdf").next();
-        var mobilePartyInvitations = DriveApp.getFilesByName("Fizz Kidz Mobile Party Invitations.jpg").next();
-        
-        var attachments = [];
-        if (this.partyType == "In-store") {
-        if (this.location == "Malvern") {
-            attachments.push(inStoreInvitations3pp);
-            attachments.push(inStoreInvitationsLarge);
-        }
-        else if (this.location == "Balwyn") {
-            attachments.push(balwynInvitations);
-        }
-        } else {
-        attachments.push(mobilePartyInvitations);
-        }
-        
         var body = t.evaluate().getContent();
         var subject = "Party Booking Confirmation";
     
         // determine which account to send from
         var fromAddress = determineFromEmailAddress(this.location);
     
-        var signature = getGmailSignature(fromAddress);
+        var signature = getGmailSignature();
         
         // Send the confirmation email
-        GmailApp.sendEmail(this.emailAddress, subject, "", {from: fromAddress, htmlBody: body + signature, name : "Fizz Kidz", attachments : attachments});
+        GmailApp.sendEmail(this.emailAddress, subject, "", {from: fromAddress, htmlBody: body + signature, name : "Fizz Kidz"});
     }
 }
