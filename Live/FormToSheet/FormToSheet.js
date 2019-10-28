@@ -1,13 +1,3 @@
-var additions_array = [
-  "Chicken Nuggets",
-  "Fairy Bread",
-  "Fruit Platter",
-  "Sandwich Platter",
-  "Veggie Platter",
-  "Watermelon Platter",
-  "Wedges"
-]
-
 function mergeCreations(string1, string2) {
   if (string2 != '') {
     if (string1 != '') {
@@ -18,16 +8,6 @@ function mergeCreations(string1, string2) {
   return string1
 }
 
-function appendAddition(additions, addition, value) {
-  if (value != '') {
-    if (additions != '') {
-      additions += '\n'
-    }
-    additions += (addition + ': ' + value)
-  }
-  return additions
-}
-
 function onSubmit(e) {
   
   console.log(e.values);
@@ -35,9 +15,9 @@ function onSubmit(e) {
 
   /**
    * Party type determined by number of questions
-   * 26 questions in the In-store form, 14 in the Mobile form
+   * 19 questions in the In-store form, 14 in the Mobile form
    */
-  var partyType = (e.values.length == 26) ? e.values[5] : "Mobile";
+  var partyType = (e.values.length == 19) ? e.values[5] : "Mobile";
   console.log("Party type: " + partyType);
   
   var dateTime = e.values[1].split(" ");
@@ -75,33 +55,22 @@ function onSubmit(e) {
     }
     console.log("Creations: " + creations);
 
-    var additions = '';
-    for (var i = 0; i < additions_array.length; i++) {
-      additions = appendAddition(additions, additions_array[i], e.values[i+12])
-    }
-
-    // add lolly bags question
-    if (e.values[19] == "Yes please") {
-      if (additions != '') {
-        additions += '\n';
-      }
-      additions += "Lolly Bags - $2.50 each"
-    }
+    var additions = e.values[12]
     console.log("Additions: " + additions);
   
-    var cakeRequired = e.values[20];
+    var cakeRequired = e.values[13];
     console.log("Cake required: " + cakeRequired);
     
-    var selectedCake = e.values[21];
+    var selectedCake = e.values[14];
     console.log("Selected Cake: " + selectedCake);
     
-    var cakeFlavour = e.values[22];
+    var cakeFlavour = e.values[15];
     console.log("Cake Falvour: " + cakeFlavour);
     
-    var extraInfo = e.values[23];
+    var extraInfo = e.values[16];
     console.log("Extra Info: " + extraInfo);
     
-    var questions = e.values[24];
+    var questions = e.values[17];
     console.log("Questions: " + questions);
     
     // if booking a cake, email Talia
@@ -274,7 +243,7 @@ function sendThankYouEmail(emailAddress, parentName, childrenCount, creations, a
   // determine from address
   var fromAddress = determineFromEmailAddress(location);
 
-  var signature = getGmailSignature(fromAddress);
+  var signature = getGmailSignature();
   
   // Send the confirmation email
   GmailApp.sendEmail(emailAddress, subject, "", {from: fromAddress, htmlBody: body + signature, name : "Fizz Kidz"});
@@ -405,7 +374,7 @@ function sendErrorEmail(parentName, childName, childAge, date, time, partyType) 
   GmailApp.sendEmail('info@fizzkidz.com.au', subject, "", {htmlBody: body, name : "Fizz Kidz"});
 }
 
-function getGmailSignature(fromAddress) {
+function getGmailSignature() {
   var draft = GmailApp.search("subject:talia-signature label:draft", 0, 1);
   return draft[0].getMessages()[0].getBody();
 }
