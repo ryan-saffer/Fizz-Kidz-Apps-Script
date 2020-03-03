@@ -16,7 +16,7 @@ function test() {
     dateOfParty.getFullYear(),
     dateOfParty.getMonth(),
     dateOfParty.getDate(),
-    timeOfParty.getHours() - 1,
+    timeOfParty.getHours(),
     timeOfParty.getMinutes()
     );
   var endDate = determineEndDate(dateOfParty, timeOfParty, partyLength);
@@ -124,7 +124,7 @@ function sendEmail(bookingSheetID) {
     dateOfParty.getFullYear(),
     dateOfParty.getMonth(),
     dateOfParty.getDate(),
-    timeOfParty.getHours() - 1,
+    timeOfParty.getHours(),
     timeOfParty.getMinutes()
     );
   var endDate = determineEndDate(dateOfParty, timeOfParty, partyLength);
@@ -195,7 +195,7 @@ function determineEndDate(dateOfParty, timeOfParty, partyLength) {
       break;
   }
   
-  var endDate = new Date(dateOfParty.getFullYear(), dateOfParty.getMonth(), dateOfParty.getDate(), timeOfParty.getHours() - 1 + lengthHours, timeOfParty.getMinutes() + lengthMinutes);
+  var endDate = new Date(dateOfParty.getFullYear(), dateOfParty.getMonth(), dateOfParty.getDate(), timeOfParty.getHours() + lengthHours, timeOfParty.getMinutes() + lengthMinutes);
   
   return endDate;
 }

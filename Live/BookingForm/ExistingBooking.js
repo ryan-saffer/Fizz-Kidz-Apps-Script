@@ -39,7 +39,7 @@ function ExistingBooking(sheet) {
 
         // get the start time and end time
         var eventName = this.parentName + " / " + this.childName + " " + this.childAge + "th " + this.mobileNumber;
-        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours() - 1, this.timeOfParty.getMinutes());
+        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours(), this.timeOfParty.getMinutes());
         var endDate = this.determineEndDate();
 
         // determine which calendar we should use

@@ -198,7 +198,7 @@ function Booking(sheet) {
         break;
     }
     
-    var endDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours() - 1 + lengthHours, this.timeOfParty.getMinutes() + lengthMinutes);
+    var endDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours() + lengthHours, this.timeOfParty.getMinutes() + lengthMinutes);
     
     return endDate;
   }

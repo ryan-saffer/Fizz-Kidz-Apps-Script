@@ -51,7 +51,7 @@ function NewBooking(sheet) {
     this.createCopyOfSheet = function() {
     
         // Get the correct date
-        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours() - 1, this.timeOfParty.getMinutes());
+        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours(), this.timeOfParty.getMinutes());
         var formattedTime = Utilities.formatDate(startDate, 'Australia/Sydney', 'hh:mm a');
         var formattedDate = Utilities.formatDate(startDate, 'Australia/Sydney', 'MMM d y');
         
@@ -103,7 +103,7 @@ function NewBooking(sheet) {
     this.createEvent = function(fileID) {
 
         var eventName = this.parentName + " / " + this.childName + " " + this.childAge + "th " + this.mobileNumber;
-        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours() - 1, this.timeOfParty.getMinutes());
+        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours(), this.timeOfParty.getMinutes());
         
         var endDate = this.determineEndDate();
         
@@ -145,7 +145,7 @@ function NewBooking(sheet) {
         }
 
         // Determine the start and end times of the party
-        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours() - 1, this.timeOfParty.getMinutes());
+        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours(), this.timeOfParty.getMinutes());
         var endDate = this.determineEndDate();
         
         // Determine if making one or two creations

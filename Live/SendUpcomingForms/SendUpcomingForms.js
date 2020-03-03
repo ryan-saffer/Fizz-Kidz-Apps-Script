@@ -77,7 +77,7 @@ function sendPartyForm(bookingSheetID) {
   var location = sheet.getRange('B11').getDisplayValue();
   
   // Determine the start and end times of the party
-  var startDate = new Date(dateOfParty.getFullYear(), dateOfParty.getMonth(), dateOfParty.getDate(), timeOfParty.getHours() - 1, timeOfParty.getMinutes());
+  var startDate = new Date(dateOfParty.getFullYear(), dateOfParty.getMonth(), dateOfParty.getDate(), timeOfParty.getHours(), timeOfParty.getMinutes());
   var endDate = determineEndDate(dateOfParty, timeOfParty, partyLength);
   
   // create a pre-filled form URL
@@ -150,7 +150,7 @@ function determineEndDate(dateOfParty, timeOfParty, partyLength) {
       break;
   }
   
-  var endDate = new Date(dateOfParty.getFullYear(), dateOfParty.getMonth(), dateOfParty.getDate(), timeOfParty.getHours() - 1 + lengthHours, timeOfParty.getMinutes() + lengthMinutes);
+  var endDate = new Date(dateOfParty.getFullYear(), dateOfParty.getMonth(), dateOfParty.getDate(), timeOfParty.getHours() + lengthHours, timeOfParty.getMinutes() + lengthMinutes);
   
   return endDate;
 }
