@@ -125,8 +125,11 @@ function Booking(sheet) {
     }
     // in-store party cannot have a location
     if (this.partyType == "In-store") {
-        if (this.location != "Malvern" && this.location != "Balwyn") {
-        Browser.msgBox("⚠️An In-store party location must be 'Malvern' or 'Balwyn'. Party not booked/updated. Try again.");
+      if (this.location != "Malvern"
+        && this.location != "Balwyn"
+        && this.location != "Essendon"
+      ) {
+        Browser.msgBox("⚠️An In-store party location must be 'Balwyn', 'Essendon' or 'Malvern'. Party not booked/updated. Try again.");
         throw new Error("In-store party location must be Malern or Balwyn. Operation cancelled.");
         }
     }
@@ -158,8 +161,9 @@ function Booking(sheet) {
   this.getCalendarID = function() {
 
     // event IDs
-    var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
     var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
+    var essendonStorePartiesCalendarID = "fizzkidz.com.au_k1ubc2bi0ufvhoer4o9pakion0@group.calendar.google.com"
+    var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
     var mobilePartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
   
     if (this.partyType == "In-store") {
@@ -167,6 +171,8 @@ function Booking(sheet) {
         return malvernStorePartiesCalendarID;
       } else if (this.location == "Balwyn") {
         return balwynStorePartiesCalendarID;
+      } else if (this.location == "Essendon") {
+        return essendonStorePartiesCalendarID;
       }
     } else {
       return mobilePartiesCalendarID;
@@ -198,7 +204,13 @@ function Booking(sheet) {
         break;
     }
     
-    var endDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours() + lengthHours, this.timeOfParty.getMinutes() + lengthMinutes);
+    var endDate = new Date(
+      this.dateOfParty.getFullYear(),
+      this.dateOfParty.getMonth(),
+      this.dateOfParty.getDate(),
+      this.timeOfParty.getHours() + lengthHours,
+      this.timeOfParty.getMinutes() + lengthMinutes
+    );
     
     return endDate;
   }

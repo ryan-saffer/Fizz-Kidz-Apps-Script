@@ -18,8 +18,9 @@ function main() {
     dateToday.getDate() + 11
   )
   
-  var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
   var balwynStorePartiesCalendarID = "fizzkidz.com.au_7vor3m1efd3fqbr0ola2jvglf8@group.calendar.google.com";
+  var essendonStorePartiesCalendarID = "fizzkidz.com.au_k1ubc2bi0ufvhoer4o9pakion0@group.calendar.google.com"
+  var malvernStorePartiesCalendarID = "fizzkidz.com.au_j13ot3jarb1p9k70c302249j4g@group.calendar.google.com";
   var travelPartiesCalendarID = "fizzkidz.com.au_b9aruprq8740cdamu63frgm0ck@group.calendar.google.com";
   
   var options = {
@@ -29,6 +30,14 @@ function main() {
   
   // malvern store parties
   var response = Calendar.Events.list(malvernStorePartiesCalendarID, options);
+  for (var i = 0; i < response.items.length; i++) {
+    var attachments = response.items[i].attachments;
+    var bookingSheetID = attachments[0].fileId;
+    sendPartyForm(bookingSheetID);
+  }
+
+  // essendon store parties
+  var response = Calendar.Events.list(essendonStorePartiesCalendarID, options);
   for (var i = 0; i < response.items.length; i++) {
     var attachments = response.items[i].attachments;
     var bookingSheetID = attachments[0].fileId;
