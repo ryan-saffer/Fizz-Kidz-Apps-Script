@@ -1,7 +1,7 @@
 /**
  * Returns the email address that the email should be sent from based on party location
  * If Malvern, send from "malvern@fizzkidz.com.au"
- * If Balwyn or Mobile, send from "info@fizzkidz.com.au"
+ * If Balwyn, Essendon or Mobile, send from "info@fizzkidz.com.au"
  * 
  * @param {String} location the location of the store
  * @returns {String} email address to send from
@@ -9,17 +9,9 @@
 function determineFromEmailAddress(location) {
 
   if(location == "Malvern") {
-    // send from malvern@fizzkidz.com.au
-    
     return "malvern@fizzkidz.com.au";
   }
-  else if(location == "Balwyn") {
-    // send from info@fizzkidz.com.au
-
-    return "info@fizzkidz.com.au";
-  }
-  else { // mobile party
-    // send from info@fizzkidz.com.au
+  else { // Balwyn, Essendon or mobile party
     return "info@fizzkidz.com.au";
   }
 }

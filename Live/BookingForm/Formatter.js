@@ -39,14 +39,14 @@ var Formatter = function(sheet) {
     this.applyValidationToLocationCell = function() {
         var locationCell = this.sheet.getRange('B11')
         locationCell.clearContent();
-        var helpText = "In-store party location must be 'Malvern' or 'Balwyn'";
+        var helpText = "In-store party location must be 'Balwyn', 'Essendon', or 'Malvern'";
         var rule = SpreadsheetApp.newDataValidation()
-                                    .requireValueInList(['Malvern', 'Balwyn'])
+                                    .requireValueInList(['Balwyn', 'Essendon', 'Malvern'])
                                     .setAllowInvalid(false)
                                     .setHelpText(helpText)
                                     .build();
         locationCell.setDataValidation(rule)
-        locationCell.setValue("Malvern");
+        locationCell.setValue("Balwyn");
     }
 
     /**

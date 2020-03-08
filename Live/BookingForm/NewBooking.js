@@ -102,19 +102,28 @@ function NewBooking(sheet) {
      */
     this.createEvent = function(fileID) {
 
-        var eventName = this.parentName + " / " + this.childName + " " + this.childAge + "th " + this.mobileNumber;
-        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours(), this.timeOfParty.getMinutes());
+        var eventName = this.parentName
+            + " / " + this.childName
+            + " " + this.childAge + "th "
+            + this.mobileNumber;
+        var startDate = new Date(
+            this.dateOfParty.getFullYear(),
+            this.dateOfParty.getMonth(),
+            this.dateOfParty.getDate(),
+            this.timeOfParty.getHours(),
+            this.timeOfParty.getMinutes()
+        );
         
         var endDate = this.determineEndDate();
         
         var eventObj = { 
-            summary     : eventName,
-            start       : {dateTime: startDate.toISOString()},
-            end         : {dateTime: endDate.toISOString()},
-            location    : this.location,
-            attachments : [{
+            summary: eventName,
+            start: {dateTime: startDate.toISOString()},
+            end: {dateTime: endDate.toISOString()},
+            location: this.location,
+            attachments: [{
                 'fileUrl': 'https://drive.google.com/open?id=' + fileID,
-                'title'  : 'Booking Sheet'
+                'title': 'Booking Sheet'
             }]
         };
         
@@ -145,7 +154,13 @@ function NewBooking(sheet) {
         }
 
         // Determine the start and end times of the party
-        var startDate = new Date(this.dateOfParty.getFullYear(), this.dateOfParty.getMonth(), this.dateOfParty.getDate(), this.timeOfParty.getHours(), this.timeOfParty.getMinutes());
+        var startDate = new Date(
+            this.dateOfParty.getFullYear(),
+            this.dateOfParty.getMonth(),
+            this.dateOfParty.getDate(),
+            this.timeOfParty.getHours(),
+            this.timeOfParty.getMinutes()
+        );
         var endDate = this.determineEndDate();
         
         // Determine if making one or two creations
@@ -184,7 +199,7 @@ function NewBooking(sheet) {
         t.endTime = Utilities.formatDate(endDate, 'Australia/Sydney', 'hh:mm a');
         var updated_location = this.location;
         if (this.partyType == "In-store") {
-            updated_location = (this.location == "Malvern") ? "our Malvern store" : "our Balwyn store"
+            updated_location = `our ${this.location} store`
         }
         t.partyType = this.partyType;
         t.location = updated_location;
