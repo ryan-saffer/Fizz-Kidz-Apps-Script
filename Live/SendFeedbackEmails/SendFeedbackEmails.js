@@ -85,16 +85,13 @@ function determineFromEmailAddress(location) {
   /*
    * Returns the email address that the email should be sent from.
    * If Malvern, send from "malvern@fizzkidz.com.au"
-   * If Balwyn or Mobile, send from "info@fizzkidz.com.au"
+   * If Balwyn, Essendon or Mobile, send from "info@fizzkidz.com.au"
    */
 
   if(location == "Malvern") {
     return "malvern@fizzkidz.com.au";
   }
-  else if(location == "Balwyn") {
-    return "info@fizzkidz.com.au";
-  }
-  else { // mobile party
+  else {
     return "info@fizzkidz.com.au";
   }
 }

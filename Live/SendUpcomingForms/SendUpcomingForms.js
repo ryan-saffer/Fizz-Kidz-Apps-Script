@@ -104,7 +104,7 @@ function sendPartyForm(bookingSheetID) {
   // determine location
   var updated_location = location;
   if (partyType == "In-store") {
-    updated_location = (location == "Malvern") ? "our Malvern store" : "our Balwyn store";
+    updated_location = `our ${location} store`
   }
   t.location = updated_location;
   t.preFilledURL = preFilledURL;

@@ -130,7 +130,7 @@ function Booking(sheet) {
         && this.location != "Essendon"
       ) {
         Browser.msgBox("⚠️An In-store party location must be 'Balwyn', 'Essendon' or 'Malvern'. Party not booked/updated. Try again.");
-        throw new Error("In-store party location must be Malern or Balwyn. Operation cancelled.");
+        throw new Error("In-store party location must be Balwyn, Essendon or Malvern. Operation cancelled.");
         }
     }
     

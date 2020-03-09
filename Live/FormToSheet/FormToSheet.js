@@ -43,9 +43,8 @@ function onSubmit(e) {
   console.log("Child age " + childAge);
 
   // forms diverge from here, so get respective answers
-  if (partyType == "Malvern" || partyType == "Balwyn") {
-    
-    // question 5 is Malvern or Balwyn, so skip to 6
+  if (partyType != "Mobile") {
+    // question 5 is which store, so skip to 6
     var childrenCount = e.values[6];
     console.log("Children Count: " + childrenCount);
   
@@ -252,15 +251,11 @@ function sendThankYouEmail(emailAddress, parentName, childrenCount, creations, a
 function determineFromEmailAddress(location) {
   /**
    * If location is Malvern, send from malvern@fizzkidz.com.au
-   * If location is Balwyn, send from info@fizzkidz.com.au
-   * If location neither (mobile), send from info@fizzkidz.com.au
+   * If location is Balwyn, Essendon or Mobile send from info@fizzkidz.com.au
    */
 
    if (location == "Malvern") {
      return "malvern@fizzkidz.com.au";
-   }
-   else if (location == "Balwyn") {
-     return "info@fizzkidz.com.au"
    }
    else {
      return "info@fizzkidz.com.au";
